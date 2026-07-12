@@ -389,6 +389,7 @@
 
     .add-row input {
       flex: 1;
+      min-width: 0;
       padding: 12px 14px;
       border: 2px solid var(--border);
       border-radius: 12px;
@@ -476,6 +477,46 @@
 
     .journal-meta time { font-size: 0.8rem; color: var(--muted); flex: 1; }
     .journal-entry p { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+    /* ---- sync card ---- */
+    .sync-card {
+      padding: 24px;
+      border: 2px dashed var(--border);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .sync-status { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+    .sync-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+    .sync-dot.on { background: #4c9a5f; }
+
+    .sync-code {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      padding: 12px 16px;
+      background: var(--secondary);
+      border-radius: 12px;
+      text-align: center;
+      user-select: all;
+    }
+
+    .sync-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    .ghost-btn {
+      border: 2px solid var(--border);
+      padding: 10px 16px;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--foreground);
+      font: inherit;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .ghost-btn:hover { border-color: var(--primary); }
 
     /* ---- role visibility ---- */
     .mode-husband .wife-only { display: none !important; }
@@ -694,6 +735,34 @@
         </div>
       </div>
     </section>
+
+    <!-- ============ 同期（常時表示） ============ -->
+    <section class="sync-card" aria-label="ふたりのスマホで同期">
+      <h2 style="margin:0">ふたりのスマホで同期</h2>
+
+      <div id="syncOff" style="display:flex;flex-direction:column;gap:14px">
+        <div class="sync-status"><span class="sync-dot"></span>未接続（この端末だけに保存中）</div>
+        <p>合言葉でつなぐと、夫婦それぞれのスマホで同じお願い・メモが見られるようになります。</p>
+        <div class="sync-actions">
+          <button type="button" class="add-btn" id="syncCreate">合言葉を新しく作る</button>
+        </div>
+        <div class="add-row">
+          <input type="text" id="syncCodeInput" maxlength="12" autocapitalize="characters" placeholder="相手が作った合言葉を入力">
+          <button type="button" class="ghost-btn" id="syncJoin">つなぐ</button>
+        </div>
+      </div>
+
+      <div id="syncOn" style="display:none;flex-direction:column;gap:14px">
+        <div class="sync-status"><span class="sync-dot on"></span>同期中 — ふたりのスマホに反映されます</div>
+        <p>相手のスマホでこのページを開き、下の合言葉を入力してもらってください。</p>
+        <div class="sync-code" id="syncCodeShow"></div>
+        <div class="sync-actions">
+          <button type="button" class="ghost-btn" id="syncCopy">合言葉をコピー</button>
+          <button type="button" class="ghost-btn" id="syncLeave">同期を解除</button>
+        </div>
+        <p class="autosave-note">※ 合言葉を知っている人は内容を見られます。夫婦の間だけで共有してください。</p>
+      </div>
+    </section>
   </main>
 
   <script>
@@ -711,6 +780,9 @@
       };
       const save = (id, value) => localStorage.setItem(KEY(id), JSON.stringify(value));
 
+      const NOTE_IDS = ['wifeBodyNote', 'clinicNote', 'coupleNote'];
+      const syncPush = (key, value) => { window.firebaseSync?.push(key, value); };
+
       /* ---------- 週数計算 ---------- */
       const dueDate = new Date(2026, 9, 23);
       dueDate.setHours(0, 0, 0, 0);
@@ -727,7 +799,7 @@
       [24, 26, 28, 30, 32, 34, 36, 38, 40].forEach((n) => {
         const el = document.createElement('div');
         el.className = 'week' + (weeks >= n && weeks < n + 2 ? ' active' : '');
-        el.innerHTML = `${n}週<small>${n === 28 ? '後期' : ' '}</small>`;
+        el.innerHTML = `${n}週<small>${n === 28 ? '後期' : ' '}</small>`;
         track.appendChild(el);
       });
 
@@ -763,19 +835,25 @@
 
       tabs.forEach((tab) => tab.addEventListener('click', () => activateTab(tab)));
 
-      /* ---------- チェックリスト（自動保存） ---------- */
+      /* ---------- チェックリスト（自動保存＋同期） ---------- */
       $$('.checklist input[type="checkbox"]').forEach((input) => {
         input.checked = load(`check-${input.id}`, false);
-        input.addEventListener('change', () => save(`check-${input.id}`, input.checked));
+        input.addEventListener('change', () => {
+          save(`check-${input.id}`, input.checked);
+          syncPush(`checks/${input.id}`, input.checked);
+        });
       });
 
-      /* ---------- テキスト自動保存 ---------- */
+      /* ---------- テキスト自動保存＋同期 ---------- */
       const statusTimers = {};
+      const pushTimers = {};
       $$('textarea[data-autosave]').forEach((field) => {
         field.value = load(`note-${field.id}`, '');
         const status = document.querySelector(`[data-status-for="${field.id}"]`);
         field.addEventListener('input', () => {
           save(`note-${field.id}`, field.value);
+          clearTimeout(pushTimers[field.id]);
+          pushTimers[field.id] = setTimeout(() => syncPush(`notes/${field.id}`, field.value), 500);
           if (!status) return;
           status.textContent = '✓ 保存しました';
           status.classList.add('saved');
@@ -810,11 +888,12 @@
 
             const check = document.createElement('input');
             check.type = 'checkbox';
-            check.checked = req.done;
+            check.checked = !!req.done;
             check.setAttribute('aria-label', '完了');
             check.addEventListener('change', () => {
               req.done = check.checked;
               save('requests', requests);
+              syncPush('requests', requests);
               renderRequests();
             });
 
@@ -838,6 +917,7 @@
               del.addEventListener('click', () => {
                 requests = requests.filter((r) => r !== req);
                 save('requests', requests);
+                syncPush('requests', requests);
                 renderRequests();
               });
               li.appendChild(del);
@@ -852,6 +932,7 @@
         if (!text) return;
         requests.unshift({ text, done: false, createdAt: Date.now() });
         save('requests', requests);
+        syncPush('requests', requests);
         $('reqInput').value = '';
         renderRequests();
       };
@@ -886,6 +967,7 @@
           del.addEventListener('click', () => {
             journal = journal.filter((j) => j !== entry);
             save('journal', journal);
+            syncPush('journal', journal);
             renderJournal();
           });
           meta.appendChild(badge);
@@ -906,6 +988,7 @@
         if (!text) return;
         journal.unshift({ role, text, createdAt: Date.now() });
         save('journal', journal);
+        syncPush('journal', journal);
         $('journalInput').value = '';
         renderJournal();
       });
@@ -963,11 +1046,157 @@
         detail.appendChild(ul);
       }));
 
+      /* ---------- 同期用の公開API ---------- */
+      const normList = (v) => Array.isArray(v) ? v.filter(Boolean) : (v ? Object.values(v) : []);
+
+      window.guideApp = {
+        collectAll() {
+          const checks = {};
+          $$('.checklist input[type="checkbox"]').forEach((i) => { checks[i.id] = i.checked; });
+          const notes = {};
+          NOTE_IDS.forEach((id) => { notes[id] = $(id).value; });
+          return { requests, journal, checks, notes };
+        },
+        applyRemote(data) {
+          requests = normList(data.requests);
+          save('requests', requests);
+          renderRequests();
+
+          journal = normList(data.journal);
+          save('journal', journal);
+          renderJournal();
+
+          const checks = data.checks || {};
+          $$('.checklist input[type="checkbox"]').forEach((i) => {
+            const v = !!checks[i.id];
+            if (i.checked !== v) i.checked = v;
+            save(`check-${i.id}`, v);
+          });
+
+          const notes = data.notes || {};
+          NOTE_IDS.forEach((id) => {
+            const f = $(id);
+            const v = notes[id] || '';
+            if (document.activeElement !== f && f.value !== v) f.value = v;
+            save(`note-${id}`, v);
+          });
+        },
+        setSyncStatus(connected, code) {
+          $('syncOff').style.display = connected ? 'none' : 'flex';
+          $('syncOn').style.display = connected ? 'flex' : 'none';
+          if (connected) $('syncCodeShow').textContent = code;
+        }
+      };
+
+      /* ---------- 同期ボタン ---------- */
+      const needNet = () => alert('同期機能の読み込みに失敗しました。インターネット接続を確認して、ページを開き直してください。');
+
+      $('syncCreate').addEventListener('click', () => {
+        window.firebaseSync ? window.firebaseSync.createFamily() : needNet();
+      });
+
+      $('syncJoin').addEventListener('click', () => {
+        const code = $('syncCodeInput').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (code.length < 6) { alert('合言葉が短すぎます。もう一度確認してください。'); return; }
+        window.firebaseSync ? window.firebaseSync.joinFamily(code) : needNet();
+      });
+
+      $('syncCopy').addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText($('syncCodeShow').textContent);
+          $('syncCopy').textContent = '✓ コピーしました';
+          setTimeout(() => { $('syncCopy').textContent = '合言葉をコピー'; }, 1600);
+        } catch { /* クリップボード不可の環境では手動コピー */ }
+      });
+
+      $('syncLeave').addEventListener('click', () => {
+        if (confirm('同期を解除しますか？（データはこの端末には残ります）')) {
+          window.firebaseSync?.disconnect();
+        }
+      });
+
       /* ---------- 初期化 ---------- */
       renderRequests();
       renderJournal();
       applyRole();
     })();
+  </script>
+
+  <script type="module">
+    /* Firebase 同期レイヤー（読み込み失敗時はローカル保存のみで動作） */
+    try {
+      const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+      const { getDatabase, ref, set, onValue, get, off } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js');
+
+      // Firebase のウェブ設定（公開してよい接続情報。アクセス制御はDBルール側で行う）
+      const firebaseConfig = {
+        apiKey: "AIzaSyCcVq_tZjqw6aa_P07dHbfoRtccQ9LoNbg",
+        authDomain: "futari-guide.firebaseapp.com",
+        databaseURL: "https://futari-guide-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "futari-guide",
+        storageBucket: "futari-guide.firebasestorage.app",
+        messagingSenderId: "310979754750",
+        appId: "1:310979754750:web:3b56279d2a1d0d574603af"
+      };
+
+      const fbApp = initializeApp(firebaseConfig);
+      const db = getDatabase(fbApp);
+      const CODE_KEY = 'pregnancy-guide-familyCode';
+
+      let code = localStorage.getItem(CODE_KEY) || null;
+      let familyRef = null;
+
+      const base = () => `families/${code}`;
+
+      const genCode = () => {
+        const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+        const bytes = crypto.getRandomValues(new Uint8Array(8));
+        return Array.from(bytes, (b) => chars[b % chars.length]).join('');
+      };
+
+      const listen = () => {
+        familyRef = ref(db, base());
+        onValue(familyRef, (snap) => {
+          window.guideApp.applyRemote(snap.val() || {});
+        });
+        window.guideApp.setSyncStatus(true, code);
+      };
+
+      window.firebaseSync = {
+        push(key, value) {
+          if (code) set(ref(db, `${base()}/${key}`), value);
+        },
+        createFamily() {
+          code = genCode();
+          localStorage.setItem(CODE_KEY, code);
+          set(ref(db, base()), window.guideApp.collectAll()).then(listen);
+        },
+        joinFamily(inputCode) {
+          code = inputCode;
+          localStorage.setItem(CODE_KEY, code);
+          get(ref(db, base())).then((snap) => {
+            if (!snap.exists()) {
+              // 相手側がまだ何も書いていない場合はこちらのデータを初期値に
+              set(ref(db, base()), window.guideApp.collectAll()).then(listen);
+            } else {
+              listen();
+            }
+          });
+        },
+        disconnect() {
+          if (familyRef) off(familyRef);
+          familyRef = null;
+          code = null;
+          localStorage.removeItem(CODE_KEY);
+          window.guideApp.setSyncStatus(false);
+        }
+      };
+
+      // 前回の合言葉があれば自動再接続
+      if (code) listen();
+    } catch (e) {
+      console.warn('Firebase sync unavailable:', e);
+    }
   </script>
 </body>
 </html>
