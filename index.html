@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Partner Pregnancy Guide</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      background-color: var(--background) !important;
+      --background: light-dark(rgb(255 255 255), rgb(24 24 24));
+      --foreground: light-dark(rgb(26 28 31), rgb(255 255 255));
+      --card: color-mix(in oklab, var(--foreground) 5%, transparent);
+      --card-foreground: var(--foreground);
+      --primary: light-dark(rgb(51 156 255), rgb(131 195 255));
+      --primary-foreground: light-dark(rgb(255 255 255), rgb(13 13 13));
+      --secondary: light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%));
+      --secondary-foreground: var(--foreground);
+      --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+      --muted-foreground: light-dark(rgb(26 28 31 / 49.4%), rgb(255 255 255 / 49.8%));
+      --accent: light-dark(rgb(229 242 255), rgb(13 39 63));
+      --accent-foreground: var(--primary);
+      --destructive: light-dark(rgb(226 85 7), rgb(255 133 73));
+      --border: light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%));
+      --input: light-dark(rgb(26 28 31 / 11.8%), color-mix(in oklab, rgb(0 0 0) 10%, transparent));
+      --ring: light-dark(rgb(51 156 255), rgb(131 195 255 / 76%));
+      --font-size-base: 14px;
+      --font-sans: -apple-system, system-ui, "Segoe UI", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+      --font-size-normal: max(11px, var(--font-size-base));
+      --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+      --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+      --radius-2xl: calc(12.5px * 1.6);
+      --radius-lg: 12.5px;
+      --radius: 12.5px;
+      --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      padding: 0;
+      color: var(--foreground);
+      background: var(--background);
+      font-family: var(--font-sans);
+      font-size: var(--font-size-normal);
+      line-height: 1.5;
+    }
+
+    #app { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 736px; margin: 0 auto; padding: 1rem; }
+
+    .hero {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1.35fr 0.9fr;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 22px;
+      padding: 26px;
+      background: linear-gradient(125deg, var(--secondary), var(--accent));
+      color: var(--secondary-foreground);
+      border-radius: 18px;
+    }
+
+    .hero::after { content: '✦  ·  ✧  ·  ✦'; position: absolute; right: 18px; top: 14px; letter-spacing: 10px; color: var(--primary); opacity: 0.45; }
+    .eyebrow { color: var(--muted-foreground); margin: 0 0 6px; }
+    h1 { margin: 0 0 8px; font-size: var(--font-size-h1); }
+    h2 { margin: 0 0 12px; font-size: var(--font-size-h2); }
+    p { margin: 0; }
+
+    .due {
+      position: relative;
+      z-index: 1;
+      padding: 16px;
+      background: var(--card);
+      color: var(--card-foreground);
+      border-radius: 14px;
+      box-shadow: 0 8px 22px color-mix(in srgb, var(--foreground) 12%, transparent);
+    }
+
+    .due strong { display: block; margin-top: 4px; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 18px 0 26px; }
+    .stat {
+      position: relative;
+      padding: 14px;
+      background: var(--card);
+      color: var(--card-foreground);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .stat::after { content: '✦'; position: absolute; right: 10px; top: 7px; color: var(--primary); opacity: 0.28; font-size: 1.55em; }
+    .stat b { display: block; font-size: 1.45em; font-weight: 500; }
+    .stat span { color: var(--muted-foreground); font-size: 0.88em; }
+
+    .week-track {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 6px;
+      margin: 10px 0 28px;
+    }
+
+    .week {
+      min-height: 52px;
+      padding: 5px 3px;
+      background: var(--muted);
+      color: var(--muted-foreground);
+      text-align: center;
+      border-radius: 12px;
+      font-size: 0.78em;
+      transition: transform 0.2s ease;
+    }
+
+    .week.active {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      font-weight: 500;
+      transform: translateY(-4px);
+      box-shadow: 0 5px 0 color-mix(in srgb, var(--foreground) 12%, transparent);
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .tabs button {
+      appearance: none;
+      border: 1px solid var(--border);
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--foreground);
+      font: inherit;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .tabs button:hover { transform: translateY(-2px); }
+    .tabs button[aria-selected="true"] { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .section { margin-bottom: 22px; }
+
+    .checklist { list-style: none; padding: 0; margin: 0; }
+    .checklist li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .checklist input[type="checkbox"] { margin-top: 3px; accent-color: var(--primary); }
+    .checklist label { cursor: pointer; }
+    .checklist input:checked + label { color: var(--muted-foreground); text-decoration: line-through; }
+
+    .callout { padding: 16px; background: var(--secondary); color: var(--secondary-foreground); border-radius: 14px; }
+    .warning {
+      padding: 14px;
+      border: 1px solid var(--destructive);
+      border-radius: 14px;
+    }
+
+    .warning strong { color: var(--destructive); }
+
+    .learning { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .lesson {
+      text-align: left;
+      width: 100%;
+      padding: 16px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--card);
+      color: var(--card-foreground);
+      font: inherit;
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .lesson:hover {
+      background: var(--accent);
+      color: var(--accent-foreground);
+      transform: translateY(-3px) rotate(-0.3deg);
+      box-shadow: 0 8px 18px color-mix(in srgb, var(--foreground) 10%, transparent);
+    }
+
+    .lesson b { display: block; font-weight: 500; margin-bottom: 5px; }
+    .lesson span { color: var(--muted-foreground); font-size: 0.85em; }
+
+    .detail {
+      min-height: 150px;
+      padding: 16px;
+      border-left: 3px solid var(--primary);
+      background: var(--muted);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .detail h3 { margin: 0 0 8px; }
+    .detail ul { margin: 8px 0 0; padding-left: 20px; }
+
+    .note {
+      width: 100%;
+      box-sizing: border-box;
+      min-height: 125px;
+      padding: 12px;
+      border: 1px solid var(--input);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--foreground);
+      font: inherit;
+      resize: vertical;
+    }
+
+    .note:focus { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+    .save-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; color: var(--muted-foreground); font-size: 0.9em; }
+    .save {
+      border: 0;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: var(--primary);
+      color: var(--primary-foreground);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .hero-art {
+      position: relative;
+      z-index: 1;
+      justify-self: end;
+      display: grid;
+      place-items: center;
+      width: 124px;
+      height: 124px;
+      border-radius: 50%;
+      background: var(--card);
+      color: var(--card-foreground);
+      box-shadow: 0 10px 0 color-mix(in srgb, var(--foreground) 10%, transparent);
+      font-size: 4.4em;
+      transform: rotate(-8deg);
+    }
+
+    .hero-art span { transform: rotate(8deg); }
+    .spark { display: inline-block; color: var(--primary); margin-right: 6px; }
+
+    @media (max-width: 600px) {
+      .hero, .two-col { grid-template-columns: 1fr; }
+      .learning { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr 1fr 1fr; }
+      .week-track { grid-template-columns: repeat(5, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <main id="app" aria-label="妊娠と子育てのパートナーガイド">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">パートナーのための妊娠・子育てガイド</p>
+        <h1>いっしょに、安心して迎える準備を。</h1>
+        <p>知る・話す・動くを、今の週数に合わせて。</p>
+      </div>
+      <div>
+        <div class="hero-art" aria-hidden="true"><span>🧸</span></div>
+        <div class="due">
+          <span>出産予定日</span>
+          <strong>2026年10月23日（金）</strong>
+          <span id="countdown">計算中…</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="stats" aria-label="現在の妊娠状況">
+      <div class="stat">
+        <b id="gestation">25週</b>
+        <span>妊娠週数の目安</span>
+      </div>
+      <div class="stat">
+        <b>妊娠後期</b>
+        <span>28週から</span>
+      </div>
+      <div class="stat">
+        <b>今週のテーマ</b>
+        <span>休息と産前準備</span>
+      </div>
+    </div>
+
+    <section aria-label="週数の見通し">
+      <h2>これからの見通し</h2>
+      <div class="week-track" id="weekTrack"></div>
+    </section>
+
+    <nav class="tabs" role="tablist" aria-label="ガイドの内容">
+      <button role="tab" aria-selected="true" aria-controls="today" id="tab-today">今日の支え方</button>
+      <button role="tab" aria-selected="false" aria-controls="learn" id="tab-learn">学ぶ</button>
+      <button role="tab" aria-selected="false" aria-controls="prepare" id="tab-prepare">準備する</button>
+      <button role="tab" aria-selected="false" aria-controls="notes" id="tab-notes">ふたりのメモ</button>
+    </nav>
+
+    <section id="today" class="panel active" role="tabpanel" aria-labelledby="tab-today">
+      <div class="two-col">
+        <div class="section">
+          <h2>今日できる3つ</h2>
+          <ul class="checklist" data-list="today">
+            <li><input id="t1" type="checkbox"><label for="t1">「体調はどう？」と、答えを急がずに聞く</label></li>
+            <li><input id="t2" type="checkbox"><label for="t2">家事を一つ引き受け、休める時間をつくる</label></li>
+            <li><input id="t3" type="checkbox"><label for="t3">次回健診・気になることを一緒に確認する</label></li>
+          </ul>
+        </div>
+        <div class="section">
+          <h2>この時期のポイント</h2>
+          <div class="callout">
+            <strong>25〜27週ごろ</strong><br>お腹の大きさや動きで、疲れ・眠りにくさ・腰の負担が増えやすい時期です。正解を急がず、本人が心地よい方法を一緒に探しましょう。
+          </div>
+        </div>
+      </div>
+      <div class="warning">
+        <strong>受診の目安</strong> 出血、破水の疑い、強い腹痛、規則的な張り、急なむくみ・強い頭痛、胎動が明らかに少ないと感じるときは、自己判断せず産院へ連絡してください。
+      </div>
+    </section>
+
+    <section id="learn" class="panel" role="tabpanel" aria-labelledby="tab-learn">
+      <div class="section">
+        <h2>知りたいテーマを選ぶ</h2>
+        <div class="learning">
+          <button class="lesson" data-lesson="body"><b><span class="spark">✦</span>妊娠中のからだ</b><span>変化と日常の工夫</span></button>
+          <button class="lesson" data-lesson="feelings"><b><span class="spark">♡</span>気持ちと対話</b><span>不安・すれ違いへの向き合い方</span></button>
+          <button class="lesson" data-lesson="birth"><b><span class="spark">✧</span>出産の準備</b><span>バースプラン・連絡の段取り</span></button>
+          <button class="lesson" data-lesson="newborn"><b><span class="spark">☾</span>産後と赤ちゃん</b><span>回復・授乳・生活リズム</span></button>
+          <button class="lesson" data-lesson="systems"><b><span class="spark">✦</span>手続きと制度</b><span>勤務先・自治体に確認すること</span></button>
+          <button class="lesson" data-lesson="partner"><b><span class="spark">♡</span>パートナーの役割</b><span>主体的に担うために</span></button>
+        </div>
+      </div>
+      <article class="detail" id="lessonDetail" aria-live="polite">
+        <h3>妊娠中のからだ</h3>
+        <p>体調の変化には個人差があります。「一般的には」よりも、目の前の本人の感覚を大切に。</p>
+        <ul>
+          <li>予定を詰め込みすぎない</li>
+          <li>食事・移動・休息を一緒に調整する</li>
+          <li>気になる症状は健診時にメモして相談する</li>
+        </ul>
+      </article>
+    </section>
+
+    <section id="prepare" class="panel" role="tabpanel" aria-labelledby="tab-prepare">
+      <div class="two-col">
+        <div class="section">
+          <h2>出産までに</h2>
+          <ul class="checklist" data-list="birth">
+            <li><input id="b1" type="checkbox"><label for="b1">産院への連絡方法・夜間連絡先を確認</label></li>
+            <li><input id="b2" type="checkbox"><label for="b2">入院バッグと必要書類を一緒に準備</label></li>
+            <li><input id="b3" type="checkbox"><label for="b3">陣痛・破水時の移動手段を決める</label></li>
+            <li><input id="b4" type="checkbox"><label for="b4">立ち会い・面会の希望とルールを確認</label></li>
+          </ul>
+        </div>
+        <div class="section">
+          <h2>産後の生活を守る</h2>
+          <ul class="checklist" data-list="post">
+            <li><input id="p1" type="checkbox"><label for="p1">食事・洗濯・買い物の分担を決める</label></li>
+            <li><input id="p2" type="checkbox"><label for="p2">頼れる家族・地域サービスを洗い出す</label></li>
+            <li><input id="p3" type="checkbox"><label for="p3">睡眠を交代で確保する方法を話す</label></li>
+            <li><input id="p4" type="checkbox"><label for="p4">出生届・保険などの期限を確認</label></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="notes" class="panel" role="tabpanel" aria-labelledby="tab-notes">
+      <div class="two-col">
+        <div class="section">
+          <h2>健診で聞きたいこと</h2>
+          <textarea class="note" id="clinicNote" placeholder="例：むくみが気になる。家でできる対策は？"></textarea>
+          <div class="save-row">
+            <span id="clinicSaved">この端末に保存されます</span>
+            <button class="save" data-save="clinicNote">保存</button>
+          </div>
+        </div>
+        <div class="section">
+          <h2>ふたりで話したいこと</h2>
+          <textarea class="note" id="coupleNote" placeholder="例：産後、どんなサポートがあると安心？"></textarea>
+          <div class="save-row">
+            <span id="coupleSaved">この端末に保存されます</span>
+            <button class="save" data-save="coupleNote">保存</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      // Utility functions
+      const $ = (id) => document.getElementById(id);
+      const $$ = (sel) => document.querySelectorAll(sel);
+      const getStorageKey = (id) => `pregnancy-guide-${id}`;
+
+      // Date and week calculations
+      const dueDate = new Date(2026, 9, 23);
+      dueDate.setHours(0, 0, 0, 0);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const daysUntilDue = Math.ceil((dueDate - today) / 86400000);
+      const safeDaysUntilDue = Math.max(0, daysUntilDue);
+      const gestationDays = Math.max(0, 280 - safeDaysUntilDue);
+      const weeks = Math.floor(gestationDays / 7);
+      const days = gestationDays % 7;
+
+      // Update countdown and gestation
+      $('countdown').textContent = safeDaysUntilDue ? `あと ${safeDaysUntilDue} 日` : '出産予定日を過ぎています';
+      $('gestation').textContent = `${weeks}週${days}日`;
+
+      // Build week track
+      const weekTrack = $('weekTrack');
+      [24, 26, 28, 30, 32, 34, 36, 38, 40].forEach((weekNum) => {
+        const el = document.createElement('div');
+        el.className = 'week' + (weeks >= weekNum && weeks < weekNum + 2 ? ' active' : '');
+        el.innerHTML = `${weekNum}週<small>${weekNum === 28 ? '後期' : ' '}</small>`;
+        weekTrack.appendChild(el);
+      });
+
+      // Lesson content
+      const lessons = {
+        body: ['妊娠中のからだ', '体調の変化には個人差があります。「一般的には」よりも、目の前の本人の感覚を大切に。', [
+          '予定を詰め込みすぎない',
+          '食事・移動・休息を一緒に調整する',
+          '気になる症状は健診時にメモして相談する'
+        ]],
+        feelings: ['気持ちと対話', '不安やイライラを解決しようと急がず、まず受け止めることが土台になります。', [
+          '「どうしてほしい？」と具体的に聞く',
+          '意見が違っても、体験の違いを認める',
+          '二人とも休める時間をつくる'
+        ]],
+        birth: ['出産の準備', '産院の方針を確認し、希望と緊急時の動きを事前に共有しておくと安心です。', [
+          'バースプランを一緒に読む',
+          '連絡・移動・上の子の対応を決める',
+          '陣痛時にしてほしいことを聞く'
+        ]],
+        newborn: ['産後と赤ちゃん', '産後は回復の途中です。赤ちゃんの世話と同じくらい、母体の休息を優先しましょう。', [
+          'パートナーが家事と外部連絡を担う',
+          '授乳以外のケアを先回りして担う',
+          '気分の落ち込みが続くときは相談先につなぐ'
+        ]],
+        systems: ['手続きと制度', '使える制度は家庭や勤務先で異なります。早めに担当窓口へ確認しましょう。', [
+          '勤務先の休業・給付制度を確認',
+          '自治体の妊産婦・子育て支援を確認',
+          '必要書類と期限をリスト化'
+        ]],
+        partner: ['パートナーの役割', '「手伝う」ではなく、家族の暮らしを自分の担当として把握する姿勢が大切です。', [
+          '見えない家事も含めて担当を持つ',
+          '指示待ちにせず、確認して行動する',
+          '自分の不安も信頼できる相手に話す'
+        ]]
+      };
+
+      // Tab switching
+      const tabs = $$('[role="tab"]');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.setAttribute('aria-selected', t === tab));
+          $$('.panel').forEach(panel => {
+            panel.classList.toggle('active', panel.id === tab.getAttribute('aria-controls'));
+          });
+        });
+      });
+
+      // Lesson switching
+      $$('.lesson').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const [title, text, items] = lessons[btn.dataset.lesson];
+          $('lessonDetail').innerHTML = `<h3>${title}</h3><p>${text}</p><ul>${items.map(item => `<li>${item}</li>`).join('')}</ul>`;
+        });
+      });
+
+      // Checkbox persistence
+      $$('.checklist input[type="checkbox"]').forEach(input => {
+        const key = getStorageKey(input.id);
+        input.checked = localStorage.getItem(key) === '1';
+        input.addEventListener('change', () => {
+          localStorage.setItem(key, input.checked ? '1' : '0');
+        });
+      });
+
+      // Textarea persistence
+      ['clinicNote', 'coupleNote'].forEach(id => {
+        const field = $(id);
+        field.value = localStorage.getItem(getStorageKey(id)) || '';
+      });
+
+      // Save buttons
+      $$('[data-save]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.dataset.save;
+          const value = $(id).value;
+          localStorage.setItem(getStorageKey(id), value);
+          const statusId = id === 'clinicNote' ? 'clinicSaved' : 'coupleSaved';
+          $(statusId).textContent = '保存しました';
+          setTimeout(() => {
+            $(statusId).textContent = 'この端末に保存されます';
+          }, 2000);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
