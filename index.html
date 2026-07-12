@@ -146,8 +146,9 @@
     }
 
     .due span { font-size: 0.85rem; opacity: 0.7; }
-    .due strong { display: block; margin-top: 4px; font-size: 1.2rem; font-weight: 600; }
-    .due #countdown { display: block; margin-top: 6px; font-size: 0.9rem; color: var(--primary-light); font-weight: 500; }
+    .due strong { display: block; margin-top: 4px; font-size: 1.15rem; font-weight: 600; }
+    .due #countdown { display: block; margin-top: 6px; font-size: 0.9rem; color: var(--primary-light); font-weight: 600; }
+    .due #genderChip { display: block; margin-top: 4px; font-size: 0.85rem; opacity: 0.85; }
 
     .hero-art {
       position: relative;
@@ -167,7 +168,7 @@
 
     .hero-art span { transform: rotate(10deg); display: block; }
 
-    /* ---- role toggle ---- */
+    /* ---- role toggle / streak ---- */
     .role-toggle {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -203,6 +204,9 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
+    .streak { text-align: center; color: var(--muted); font-size: 0.9rem; margin-top: -12px; }
+    .streak b { color: var(--accent); }
+
     /* ---- stats / week ---- */
     .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 
@@ -213,12 +217,21 @@
       border-radius: 16px;
     }
 
-    .stat b { display: block; font-size: 1.4rem; font-weight: 600; color: var(--primary); margin-bottom: 4px; }
+    .stat b { display: block; font-size: 1.25rem; font-weight: 600; color: var(--primary); margin-bottom: 4px; }
     .stat span { color: var(--muted); font-size: 0.85rem; }
 
-    .week-track { display: grid; grid-template-columns: repeat(9, 1fr); gap: 8px; }
+    .week-track {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 2px 10px;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+    }
 
     .week {
+      min-width: 54px;
+      flex: 0 0 auto;
       min-height: 58px;
       display: flex;
       flex-direction: column;
@@ -232,7 +245,7 @@
       border: 2px solid transparent;
     }
 
-    .week small { font-size: 0.72rem; opacity: 0.6; }
+    .week small { font-size: 0.68rem; opacity: 0.65; white-space: nowrap; }
 
     .week.active {
       background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
@@ -241,6 +254,54 @@
       transform: scale(1.06);
       box-shadow: var(--shadow-md);
     }
+
+    .week.past { opacity: 0.55; }
+
+    /* ---- growth card ---- */
+    .growth-card {
+      padding: 24px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(200, 153, 104, 0.08) 0%, rgba(212, 137, 122, 0.04) 100%);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .growth-head { display: flex; align-items: center; gap: 10px; }
+    .growth-head h2 { margin: 0; flex: 1; font-size: 1.15rem; }
+
+    .gnav {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: transparent;
+      color: var(--foreground);
+      font-size: 1rem;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .gnav:hover { border-color: var(--primary); }
+    .gnav:disabled { opacity: 0.3; cursor: default; }
+
+    .growth-body { display: flex; gap: 20px; align-items: center; }
+    .growth-emoji { font-size: 4rem; line-height: 1; flex-shrink: 0; }
+    .growth-info { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0; }
+    .growth-size { font-size: 1.15rem; font-weight: 600; }
+
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .chip {
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: var(--input);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .growth-note { color: var(--muted); font-size: 0.78rem; }
 
     /* ---- tabs ---- */
     .tabs { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -384,7 +445,7 @@
 
     .autosave-note.saved { color: #4c9a5f; }
 
-    /* ---- request list ---- */
+    /* ---- forms / add rows ---- */
     .add-row { display: flex; gap: 10px; }
 
     .add-row input {
@@ -412,6 +473,24 @@
       white-space: nowrap;
     }
 
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field > span { font-size: 0.88rem; font-weight: 600; color: var(--muted); }
+
+    .field input, .field select {
+      padding: 12px 14px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: transparent;
+      color: var(--foreground);
+      font: inherit;
+      width: 100%;
+    }
+
+    .field input:focus, .field select:focus { outline: none; border-color: var(--primary); }
+
+    /* ---- request / name lists ---- */
     .req-list, .journal-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
 
     .req-item {
@@ -436,6 +515,19 @@
     .req-item .req-text { flex: 1; overflow-wrap: anywhere; }
     .req-item.done .req-text { color: var(--muted); text-decoration: line-through; }
     .req-item .req-date { font-size: 0.78rem; color: var(--muted); display: block; margin-top: 2px; }
+
+    .heart-btn {
+      border: 2px solid var(--border);
+      background: transparent;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .heart-btn.on { border-color: var(--wife); background: rgba(201, 122, 149, 0.1); }
 
     .del-btn {
       border: none;
@@ -477,6 +569,44 @@
 
     .journal-meta time { font-size: 0.8rem; color: var(--muted); flex: 1; }
     .journal-entry p { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+    /* ---- kick counter ---- */
+    .kick-box {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+
+    .kick-count { font-size: 2rem; font-weight: 700; color: var(--wife); min-width: 70px; text-align: center; }
+    .kick-count small { display: block; font-size: 0.75rem; font-weight: 500; color: var(--muted); }
+
+    .kick-btn {
+      border: none;
+      padding: 14px 22px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--wife) 0%, var(--accent) 100%);
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    /* ---- progress bar ---- */
+    .pbar-row { display: flex; justify-content: space-between; align-items: baseline; }
+    .pbar-row b { color: var(--primary); font-size: 1.1rem; }
+    .pbar { height: 10px; background: var(--input); border-radius: 999px; overflow: hidden; }
+
+    .pbar > div {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), var(--primary));
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
 
     /* ---- sync card ---- */
     .sync-card {
@@ -529,9 +659,10 @@
       .two-col { grid-template-columns: 1fr; gap: 18px; }
       .learning { grid-template-columns: 1fr; }
       .stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-      .stat { padding: 14px; }
-      .stat b { font-size: 1.1rem; }
-      .week-track { grid-template-columns: repeat(5, 1fr); }
+      .stat { padding: 12px; }
+      .stat b { font-size: 0.98rem; }
+      .growth-body { gap: 14px; }
+      .growth-emoji { font-size: 3.2rem; }
       h1 { font-size: 1.5rem; }
     }
   </style>
@@ -549,8 +680,9 @@
         <div class="hero-art" aria-hidden="true"><span>🧸</span></div>
         <div class="due">
           <span>出産予定日</span>
-          <strong>2026年10月23日（金）</strong>
-          <span id="countdown">計算中…</span>
+          <strong id="dueShow">未設定</strong>
+          <span id="countdown">👶タブから設定してください</span>
+          <span id="genderChip"></span>
         </div>
       </div>
     </section>
@@ -560,14 +692,34 @@
       <button type="button" id="roleWife">👩 妻モード</button>
     </div>
 
+    <p class="streak" id="streak"></p>
+
     <div class="stats" aria-label="現在の妊娠状況">
       <div class="stat"><b id="gestation">--</b><span>妊娠週数の目安</span></div>
-      <div class="stat"><b>妊娠後期</b><span>28週から</span></div>
-      <div class="stat"><b>今週のテーマ</b><span>休息と産前準備</span></div>
+      <div class="stat"><b id="trimester">--</b><span>今の時期</span></div>
+      <div class="stat"><b id="milestone">--</b><span>次のマイルストーン</span></div>
     </div>
 
+    <!-- 今週の赤ちゃん -->
+    <section class="growth-card" aria-label="今週の赤ちゃんの様子">
+      <div class="growth-head">
+        <h2 id="growthTitle">今週の赤ちゃん</h2>
+        <button type="button" class="gnav" id="gPrev" aria-label="前の週">◀</button>
+        <button type="button" class="gnav" id="gNext" aria-label="次の週">▶</button>
+      </div>
+      <div class="growth-body">
+        <div class="growth-emoji" id="growthEmoji">👶</div>
+        <div class="growth-info">
+          <div class="growth-size" id="growthSize">出産予定日を設定すると表示されます</div>
+          <div class="chips" id="growthChips"></div>
+          <p id="growthFact">👶タブで出産予定日を入れると、週ごとの赤ちゃんの様子がここに表示されます。</p>
+        </div>
+      </div>
+      <p class="growth-note">※ 大きさ・体重は一般的な目安です。個人差があります。</p>
+    </section>
+
     <section aria-label="週数の見通し">
-      <h2>これからの見通し</h2>
+      <h2>これからの見通し（1週ごと）</h2>
       <div class="week-track" id="weekTrack"></div>
     </section>
 
@@ -575,6 +727,7 @@
       <button role="tab" class="husband-only" data-tab="today" data-first="husband">今日の支え方</button>
       <button role="tab" class="wife-only" data-tab="myday" data-first="wife">今日のわたし</button>
       <button role="tab" class="wife-only" data-tab="requests">夫へのお願い</button>
+      <button role="tab" data-tab="baby">👶 赤ちゃん</button>
       <button role="tab" data-tab="learn">学ぶ</button>
       <button role="tab" class="husband-only" data-tab="prepare">準備する</button>
       <button role="tab" data-tab="notes">ふたりのメモ</button>
@@ -586,23 +739,26 @@
         <h2>妻からのお願い</h2>
         <ul class="req-list" id="reqListHusband"></ul>
         <p class="empty-hint" id="reqEmptyHusband">まだお願いは届いていません。妻モードから追加できます。</p>
+        <p class="autosave-note" id="kickInfoH" style="display:none"></p>
       </div>
       <div class="two-col">
         <div class="section">
           <h2>今日できる3つ</h2>
-          <ul class="checklist">
-            <li><input id="t1" type="checkbox"><label for="t1">「体調はどう？」と、答えを急がずに聞く</label></li>
-            <li><input id="t2" type="checkbox"><label for="t2">家事を一つ引き受け、休める時間をつくる</label></li>
-            <li><input id="t3" type="checkbox"><label for="t3">次回健診・気になることを一緒に確認する</label></li>
-          </ul>
+          <ul class="checklist" id="dailyHusband"></ul>
+          <p class="autosave-note">毎日ちがう3つが届きます。あすの朝また見てね。</p>
         </div>
         <div class="section">
           <h2>この時期のポイント</h2>
-          <div class="callout">
-            <strong>25〜27週ごろ</strong>
-            お腹の大きさや動きで、疲れ・眠りにくさ・腰の負担が増えやすい時期です。正解を急がず、本人が心地よい方法を一緒に探しましょう。
-          </div>
+          <div class="callout"><strong id="pointHusbandTitle">今の時期</strong><span id="pointHusband"></span></div>
         </div>
+      </div>
+      <div class="section">
+        <h2>今日の声かけ例</h2>
+        <div class="callout"><strong>そのまま言ってみよう</strong><span id="hitokoto"></span></div>
+      </div>
+      <div class="section">
+        <h2>今夜の会話のタネ</h2>
+        <div class="callout"><strong>ふたりで話してみて</strong><span id="dailyQuestionH"></span></div>
       </div>
       <div class="warning">
         <strong>受診の目安</strong>　出血、破水の疑い、強い腹痛、規則的な張り、急なむくみ・強い頭痛、胎動が明らかに少ないと感じるときは、自己判断せず産院へ連絡してください。
@@ -611,22 +767,29 @@
 
     <!-- ============ 妻：今日のわたし ============ -->
     <section id="myday" class="panel wife-only" role="tabpanel">
+      <div class="section">
+        <h2>胎動カウンター</h2>
+        <div class="kick-box">
+          <div class="kick-count"><span id="kickCountW">0</span><small>今日の回数</small></div>
+          <button type="button" class="kick-btn" id="kickAdd">👣 胎動を感じた！</button>
+          <button type="button" class="ghost-btn" id="kickUndo" aria-label="1回減らす">−1</button>
+        </div>
+        <p class="autosave-note">記録は夫のスマホにも共有されます。</p>
+      </div>
       <div class="two-col">
         <div class="section">
-          <h2>今日のセルフケア</h2>
-          <ul class="checklist">
-            <li><input id="w1" type="checkbox"><label for="w1">がんばりすぎない。休む時間を先に確保する</label></li>
-            <li><input id="w2" type="checkbox"><label for="w2">つらいこと・不安を一つ、言葉にして伝える</label></li>
-            <li><input id="w3" type="checkbox"><label for="w3">水分と食事、からだが求めるものをとる</label></li>
-          </ul>
+          <h2>今日のセルフケア3つ</h2>
+          <ul class="checklist" id="dailyWife"></ul>
+          <p class="autosave-note">毎日ちがう3つが届きます。できたらチェック。</p>
         </div>
         <div class="section">
           <h2>この時期のわたし</h2>
-          <div class="callout wife-tone">
-            <strong>25〜27週ごろ</strong>
-            眠りが浅くなったり、腰やお腹に負担を感じやすい時期。「甘えている」のではなく、からだが二人分働いています。頼ることは、赤ちゃんのためでもあります。
-          </div>
+          <div class="callout wife-tone"><strong id="pointWifeTitle">今の時期</strong><span id="pointWife"></span></div>
         </div>
+      </div>
+      <div class="section">
+        <h2>今夜の会話のタネ</h2>
+        <div class="callout wife-tone"><strong>ふたりで話してみて</strong><span id="dailyQuestionW"></span></div>
       </div>
       <div class="section">
         <h2>からだと気持ちのメモ</h2>
@@ -662,6 +825,42 @@
       </div>
     </section>
 
+    <!-- ============ 共通：👶 赤ちゃん ============ -->
+    <section id="baby" class="panel" role="tabpanel">
+      <div class="section">
+        <h2>赤ちゃんの情報</h2>
+        <div class="form-grid">
+          <label class="field">
+            <span>出産予定日</span>
+            <input type="date" id="setDue">
+          </label>
+          <label class="field">
+            <span>性別</span>
+            <select id="setGender">
+              <option value="secret">🎀 おたのしみ・未定</option>
+              <option value="boy">👦 男の子</option>
+              <option value="girl">👧 女の子</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>名前（決まったら）</span>
+            <input type="text" id="setName" maxlength="20" placeholder="例：はると">
+          </label>
+        </div>
+        <p class="autosave-note" data-status-for="settings">変更すると自動で保存され、ふたりのスマホに反映されます</p>
+      </div>
+      <div class="section">
+        <h2>名前候補をふたりで考える</h2>
+        <div class="add-row">
+          <input type="text" id="nameInput" maxlength="20" placeholder="例：ひなた">
+          <button type="button" class="add-btn" id="nameAdd">候補に追加</button>
+        </div>
+        <ul class="req-list" id="nameList"></ul>
+        <p class="empty-hint" id="nameEmpty">まだ候補はありません。思いついたら気軽に追加を。♥はお互いに押せます。</p>
+        <p class="autosave-note">ふたりとも♥した名前には ✨ がつきます。決まったら上の「名前」欄へ！</p>
+      </div>
+    </section>
+
     <!-- ============ 共通：学ぶ ============ -->
     <section id="learn" class="panel" role="tabpanel">
       <div class="section">
@@ -688,6 +887,10 @@
 
     <!-- ============ 夫：準備する ============ -->
     <section id="prepare" class="panel husband-only" role="tabpanel">
+      <div class="section">
+        <div class="pbar-row"><span>準備の進み具合</span><b id="prepPct">0%</b></div>
+        <div class="pbar"><div id="prepFill"></div></div>
+      </div>
       <div class="two-col">
         <div class="section">
           <h2>出産までに</h2>
@@ -783,27 +986,401 @@
       const NOTE_IDS = ['wifeBodyNote', 'clinicNote', 'coupleNote'];
       const syncPush = (key, value) => { window.firebaseSync?.push(key, value); };
 
-      /* ---------- 週数計算 ---------- */
-      const dueDate = new Date(2026, 9, 23);
-      dueDate.setHours(0, 0, 0, 0);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const daysLeft = Math.max(0, Math.ceil((dueDate - today) / 86400000));
-      const gestDays = Math.max(0, 280 - daysLeft);
-      const weeks = Math.floor(gestDays / 7);
+      const pad = (n) => String(n).padStart(2, '0');
+      const ymd = (d = new Date()) => `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+      const daySeed = Math.floor(Date.now() / 86400000);
+      const todayYmd = ymd();
 
-      $('countdown').textContent = daysLeft ? `あと ${daysLeft} 日` : '出産予定日を過ぎています';
-      $('gestation').textContent = `${weeks}週${gestDays % 7}日`;
-
-      const track = $('weekTrack');
-      [24, 26, 28, 30, 32, 34, 36, 38, 40].forEach((n) => {
-        const el = document.createElement('div');
-        el.className = 'week' + (weeks >= n && weeks < n + 2 ? ' active' : '');
-        el.innerHTML = `${n}週<small>${n === 28 ? '後期' : ' '}</small>`;
-        track.appendChild(el);
+      const fmt = (ts) => new Date(ts).toLocaleString('ja-JP', {
+        month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'
       });
 
-      /* ---------- モード切り替え ---------- */
+      /* ================================================================
+         データ：赤ちゃんの週ごとの発育（目安）
+         [絵文字, たとえ, 身長, 体重, ひとこと] ================================= */
+      const BABY = {
+        4:  ['🌱', 'けしの実', '約0.1cm', '—', '心臓や神経のもとがつくられ始めています。'],
+        5:  ['🍚', 'お米つぶ', '約0.2cm', '—', '小さな心臓が動き始めるころです。'],
+        6:  ['🫛', 'グリーンピース', '約0.5cm', '—', '心拍が確認できることがあります。'],
+        7:  ['🫐', 'ブルーベリー', '約1.2cm', '約2g', '手足のもとがぐんぐん伸びてきました。'],
+        8:  ['🍇', 'ラズベリー', '約1.6cm', '約4g', '指が分かれ始め、顔のパーツも形になってきます。'],
+        9:  ['🍒', 'さくらんぼ', '約2.3cm', '約7g', 'ぐっと人らしい姿になってきました。'],
+        10: ['🍓', 'いちご', '約3.1cm', '約10g', '主要な器官のもとがほぼそろいました。'],
+        11: ['🥝', 'キウイ', '約4.1cm', '約15g', 'あくびや伸びをすることもあります。'],
+        12: ['🍋', 'ライム', '約5.4cm', '約20g', '爪や産毛が生え始めます。'],
+        13: ['🍊', 'レモン〜小さなオレンジ', '約7.4cm', '約30g', 'お腹の中でくるくるとよく動いています。'],
+        14: ['🍑', 'もも', '約8.7cm', '約45g', '胎盤がほぼ完成。安定期が目前です。'],
+        15: ['🍎', 'りんご', '約10cm', '約80g', '髪の毛が生え始めるころです。'],
+        16: ['🥑', 'アボカド', '約12cm', '約110g', '安定期へ。骨がしっかりしてきます。'],
+        17: ['🍐', '洋なし', '約13cm', '約150g', '皮下脂肪がつき始めます。'],
+        18: ['🫑', 'ピーマン', '約14.2cm', '約200g', '耳が聞こえ始めるといわれています。'],
+        19: ['🍅', 'トマト', '約15.3cm', '約250g', '五感が急速に発達しています。'],
+        20: ['🍌', 'バナナ', '約25cm', '約300g', '妊娠期間の折り返し地点！（このころから全身の長さで測ります）'],
+        21: ['🥕', 'にんじん', '約27cm', '約360g', 'まつ毛や眉毛が生えそろってきます。'],
+        22: ['🥭', 'パパイヤ', '約28cm', '約430g', 'まぶたや唇がはっきりしてきます。'],
+        23: ['🍈', 'グレープフルーツ', '約29cm', '約500g', '外の音に反応して動くことがあります。'],
+        24: ['🌽', 'とうもろこし', '約30cm', '約600g', '肺が呼吸の練習を始めます。'],
+        25: ['🥒', 'ズッキーニ', '約34.6cm', '約660g', '髪の毛に色がつき始めます。'],
+        26: ['🥬', 'レタス', '約35.6cm', '約760g', 'まぶたを開けられるようになります。'],
+        27: ['🥦', 'ブロッコリー', '約36.6cm', '約875g', 'レム睡眠＝夢を見ているかもしれません。'],
+        28: ['🍆', 'なす', '約37.6cm', '約1000g', '妊娠後期スタート。まばたきができます。'],
+        29: ['🎃', '小さなかぼちゃ', '約38.6cm', '約1150g', '筋肉と肺が成熟してきます。'],
+        30: ['🥥', '大きめのココナッツ', '約39.9cm', '約1300g', '皮下脂肪が増えてふっくら体型に。'],
+        31: ['🥬', '白菜', '約41.1cm', '約1500g', '五感がほぼ完成しています。'],
+        32: ['🍠', '大きなさつまいも', '約42.4cm', '約1700g', '爪が指先まで伸びてきます。'],
+        33: ['🍍', 'パイナップル', '約43.7cm', '約1900g', '骨がだんだん固くなります。'],
+        34: ['🍈', 'メロン', '約45cm', '約2100g', '肺の機能がほぼ成熟します。'],
+        35: ['🏉', 'ラグビーボール', '約46.2cm', '約2400g', '腎臓など内臓が完成に近づきます。'],
+        36: ['🎃', '大きめのかぼちゃ', '約47.4cm', '約2600g', '臨月へ。頭を下にして準備万端。'],
+        37: ['🍉', '小玉すいか', '約48.6cm', '約2900g', '正期産！いつ生まれても大丈夫。'],
+        38: ['🍉', '小玉すいか', '約49.8cm', '約3000g', '手足の筋肉がしっかりついています。'],
+        39: ['🍉', 'すいか', '約50.7cm', '約3200g', '外の世界に出る準備は整いました。'],
+        40: ['🍉', 'すいか', '約51cm', '約3300g', '出産予定日！会える日はもうすぐ。'],
+        41: ['🍉', 'すいか', '約51.5cm', '約3400g', 'のんびり屋さん。健診で見守りましょう。']
+      };
+      const WEEK_MIN = 4, WEEK_MAX = 41;
+
+      /* ================= データ：日替わりコンテンツ（各10個） ================= */
+      const TASKS_H = {
+        early: [
+          'つわりでも食べられそうなものを一緒に探す',
+          '匂いの強い food・香水を控える気づかいをする',
+          '家事をひとつ多めに引き受ける',
+          '「体調はどう？」と答えを急がず聞く',
+          '妊娠初期の過ごし方の記事を1つ読む',
+          '次回健診の日程を自分でも把握する',
+          '飲み会・帰宅時間を早めに共有する',
+          '飲みやすい飲み物を用意しておく',
+          '妻が食べられるものを買って帰る',
+          '母子手帳・自治体の助成制度を一緒に確認する'
+        ],
+        mid: [
+          '胎動の話を聞いてみる',
+          '両親学級・パパ学級の日程を調べる',
+          'ベビー用品リストを一緒に眺める',
+          '腰や足のマッサージを申し出る',
+          '名前の候補を1つ考えて共有する',
+          '産院までの移動経路を確認しておく',
+          'お腹の記録写真を1枚撮っておく',
+          '重い荷物は先回りして持つ',
+          '家計・保険の見直しを始める',
+          'ふたりの時間をつくる（散歩・外食など）'
+        ],
+        late: [
+          '入院バッグの中身を一緒に確認する',
+          '陣痛タクシーなど移動手段を登録する',
+          '産院への連絡フローをそらで言えるようにする',
+          '出生届など提出書類を確認する',
+          '家事をひと通り一人でできるか試してみる',
+          '産後2週間の食事プランを考える',
+          '「いつ生まれても大丈夫だよ」と伝える',
+          'チャイルドシートを準備・設置する',
+          '夜間もすぐ連絡が取れる態勢にする',
+          '足のむくみをいたわる（マッサージ・足枕）'
+        ]
+      };
+
+      const TASKS_W = {
+        early: [
+          '食べられるものを、食べられる時に',
+          '眠気に逆らわず休む',
+          'つらさは我慢せず言葉で伝える',
+          '葉酸などの栄養を意識する',
+          '無理な予定はキャンセルしていい',
+          '母子手帳をもらう準備をする',
+          '気になる症状をメモしておく',
+          '締め付けない楽な服を選ぶ',
+          '「今日できたこと」を1つ認めてあげる',
+          '好きな香りや音楽でリラックスする'
+        ],
+        mid: [
+          '胎動を感じたら記録してみる',
+          '軽い散歩やストレッチをする',
+          '夫にお願いしたいことを1つ伝える',
+          '体重と相談しつつ好きなものも楽しむ',
+          '両親学級の予定を確認する',
+          '腰痛対策（クッションなど）を試す',
+          'マタニティフォトを検討してみる',
+          '名前の候補を考えてみる',
+          'むくみ・便秘対策に水分をしっかり',
+          '昼寝を罪悪感なくとる'
+        ],
+        late: [
+          '胎動カウントを習慣にする',
+          '入院バッグに自分の癒しグッズを入れる',
+          '会陰ケア・おっぱいケアを調べる',
+          '前駆陣痛と本陣痛の違いを確認する',
+          '産後してほしいことを夫に伝える',
+          '骨盤ベルトなどで腰をサポートする',
+          '短い散歩で体力をキープする',
+          '産後の授乳グッズを確認する',
+          '「がんばりすぎない」を今日の合言葉に',
+          'いつ入院してもいいようスマホを充電'
+        ]
+      };
+
+      const QUESTIONS = [
+        '生まれた日、赤ちゃんに最初になんて声をかける？',
+        '子どもの頃、親にしてもらって嬉しかったことは？',
+        'わが子とやってみたいことベスト3は？',
+        'お互いの「ここは子どもに似てほしい」ところは？',
+        '産後、最初に食べたいもの・用意してあげたいものは？',
+        '赤ちゃんの写真、1日何枚撮りそう？',
+        '10年後の家族旅行、どこに行きたい？',
+        '自分の名前の由来、知ってる？',
+        '最近、相手に助けられたなと思ったことは？',
+        '赤ちゃんはどっち似だと思う？'
+      ];
+
+      const HITOKOTO = [
+        '「いつもありがとう。今日は何かしてほしいことある？」',
+        '「無理してない？休んでていいからね」',
+        '「今日の体調はどう？」',
+        '「最近、お腹の子はよく動いてる？」',
+        '「今日のごはんは俺がなんとかするよ」',
+        '「二人分がんばってくれてありがとう」',
+        '「不安なことがあったら、いつでも話してね」',
+        '「今週末はゆっくりしよう」',
+        '「次の健診、一緒に行けるように調整するね」',
+        '「頼ってくれると、俺は嬉しいよ」'
+      ];
+
+      const POINTS_H = {
+        early: '見た目に変化がなくても、つわり・眠気・強い不安が出やすい時期。「気のせい」にせず、休める環境づくりを最優先に。',
+        mid: '体調が安定しやすい一方、腰痛やむくみが出はじめます。今のうちに両親学級や産後の分担の話を進めるのがおすすめ。',
+        late: 'お腹が大きく、眠りが浅くなりがちな時期。家事の主担当を引き受けつつ、入院・連絡の段取りを最終確認しましょう。',
+        term: 'もういつ生まれてもおかしくない時期。夜間の連絡態勢と移動手段を毎日確認。「大丈夫、任せて」が最高の安心材料です。'
+      };
+
+      const POINTS_W = {
+        early: 'つわりや眠気、理由のない不安はホルモンの仕業。がんばれない日は「がんばらない」が正解です。',
+        mid: '比較的動きやすい時期。無理のない範囲で散歩や準備を楽しみつつ、つらい時はしっかり頼りましょう。',
+        late: '眠りが浅く、からだも重い時期。「甘えている」のではなく、からだは二人分働いています。頼ることは赤ちゃんのためでもあります。',
+        term: 'いつ会えてもおかしくない時期。入院準備と充電だけ整えたら、あとはゆったり過ごして大丈夫。'
+      };
+
+      /* ================= 設定（夫婦で同期） ================= */
+      let settings = Object.assign({ dueDate: null, gender: 'secret', babyName: '' }, load('settings', {}));
+
+      const GENDER_LABEL = { boy: '👦 男の子', girl: '👧 女の子', secret: '🎀 性別はおたのしみ' };
+
+      const settingsStatus = document.querySelector('[data-status-for="settings"]');
+      let settingsStatusTimer = null;
+
+      const flashSettingsSaved = () => {
+        if (!settingsStatus) return;
+        settingsStatus.textContent = '✓ 保存しました';
+        settingsStatus.classList.add('saved');
+        clearTimeout(settingsStatusTimer);
+        settingsStatusTimer = setTimeout(() => {
+          settingsStatus.textContent = '変更すると自動で保存され、ふたりのスマホに反映されます';
+          settingsStatus.classList.remove('saved');
+        }, 1600);
+      };
+
+      const pushSettings = () => {
+        save('settings', settings);
+        syncPush('settings', settings);
+        flashSettingsSaved();
+        refresh();
+      };
+
+      $('setDue').addEventListener('change', () => { settings.dueDate = $('setDue').value || null; pushSettings(); });
+      $('setGender').addEventListener('change', () => { settings.gender = $('setGender').value; pushSettings(); });
+
+      let nameTimer = null;
+      $('setName').addEventListener('input', () => {
+        settings.babyName = $('setName').value.trim();
+        save('settings', settings);
+        clearTimeout(nameTimer);
+        nameTimer = setTimeout(() => { syncPush('settings', settings); }, 500);
+        flashSettingsSaved();
+        refresh();
+      });
+
+      /* ================= 週数計算・全体更新 ================= */
+      const MILESTONES = [
+        [112, '安定期（16週）'],
+        [196, '妊娠後期（28週）'],
+        [252, '臨月（36週）'],
+        [259, '正期産（37週）'],
+        [280, '出産予定日']
+      ];
+
+      const trimesterOf = (w) => w < 14 ? '妊娠初期' : w < 28 ? '妊娠中期' : w < 37 ? '妊娠後期' : w <= 40 ? '臨月・正期産' : '予定日超過';
+      const poolOf = (w) => w < 14 ? 'early' : w < 28 ? 'mid' : w < 37 ? 'late' : 'term';
+
+      let viewWeek = null; // null = 今週に追従
+
+      const babyCall = () => settings.babyName ? `${settings.babyName}` : '赤ちゃん';
+
+      function compute() {
+        if (!settings.dueDate) return null;
+        const due = new Date(settings.dueDate + 'T00:00:00');
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const daysLeft = Math.ceil((due - today) / 86400000);
+        const gestDays = 280 - daysLeft;
+        return { due, daysLeft, gestDays, week: Math.floor(Math.max(0, gestDays) / 7) };
+      }
+
+      function renderGrowth(week) {
+        const w = Math.min(WEEK_MAX, Math.max(WEEK_MIN, week));
+        const [emoji, tatoe, len, wt, fact] = BABY[w];
+        $('growthTitle').textContent = (viewWeek === null || (compute() && viewWeek === compute().week))
+          ? `今週の${babyCall()}（${w}週）` : `${w}週の${babyCall()}`;
+        $('growthEmoji').textContent = emoji;
+        $('growthSize').textContent = `${tatoe}くらいの大きさ`;
+        $('growthChips').innerHTML = '';
+        [`身長 ${len}`, `体重 ${wt}`].forEach((t) => {
+          const c = document.createElement('span');
+          c.className = 'chip';
+          c.textContent = t;
+          $('growthChips').appendChild(c);
+        });
+        $('growthFact').textContent = fact;
+        $('gPrev').disabled = w <= WEEK_MIN;
+        $('gNext').disabled = w >= WEEK_MAX;
+      }
+
+      $('gPrev').addEventListener('click', () => {
+        const c = compute();
+        const cur = viewWeek ?? (c ? c.week : 20);
+        viewWeek = Math.max(WEEK_MIN, cur - 1);
+        renderGrowth(viewWeek);
+      });
+
+      $('gNext').addEventListener('click', () => {
+        const c = compute();
+        const cur = viewWeek ?? (c ? c.week : 20);
+        viewWeek = Math.min(WEEK_MAX, cur + 1);
+        renderGrowth(viewWeek);
+      });
+
+      function renderDaily(pool) {
+        const key = pool === 'term' ? 'late' : pool;
+        const picks = [daySeed % 10, (daySeed + 3) % 10, (daySeed + 7) % 10];
+
+        [['dailyHusband', TASKS_H[key], 'dh'], ['dailyWife', TASKS_W[key], 'dw']].forEach(([listId, tasks, prefix]) => {
+          const ul = $(listId);
+          ul.textContent = '';
+          picks.forEach((idx, i) => {
+            const id = `${prefix}${i}-${todayYmd}`;
+            const li = document.createElement('li');
+            const input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = id;
+            input.checked = load(`check-${id}`, false);
+            input.addEventListener('change', () => {
+              save(`check-${id}`, input.checked);
+              syncPush(`checks/${id}`, input.checked);
+            });
+            const label = document.createElement('label');
+            label.htmlFor = id;
+            label.textContent = tasks[idx];
+            li.appendChild(input);
+            li.appendChild(label);
+            ul.appendChild(li);
+          });
+        });
+
+        const q = QUESTIONS[daySeed % QUESTIONS.length];
+        $('dailyQuestionH').textContent = q;
+        $('dailyQuestionW').textContent = q;
+        $('hitokoto').textContent = HITOKOTO[(daySeed + 3) % HITOKOTO.length];
+
+        $('pointHusband').textContent = POINTS_H[pool] || POINTS_H.mid;
+        $('pointWife').textContent = POINTS_W[pool] || POINTS_W.mid;
+      }
+
+      function refresh() {
+        const c = compute();
+
+        // 設定フォームへ反映（入力中は触らない）
+        if (document.activeElement !== $('setDue')) $('setDue').value = settings.dueDate || '';
+        if (document.activeElement !== $('setGender')) $('setGender').value = settings.gender;
+        if (document.activeElement !== $('setName')) $('setName').value = settings.babyName;
+
+        $('genderChip').textContent = settings.gender !== 'secret' || settings.babyName
+          ? `${GENDER_LABEL[settings.gender]}${settings.babyName ? `・${settings.babyName}` : ''}`
+          : '';
+
+        const track = $('weekTrack');
+        track.textContent = '';
+
+        if (!c) {
+          $('dueShow').textContent = '未設定';
+          $('countdown').textContent = '👶タブから設定してください';
+          $('gestation').textContent = '--';
+          $('trimester').textContent = '--';
+          $('milestone').textContent = '--';
+          $('pointHusbandTitle').textContent = '今の時期';
+          $('pointWifeTitle').textContent = '今の時期';
+          renderDaily('mid');
+          $('growthTitle').textContent = '今週の赤ちゃん';
+          $('growthEmoji').textContent = '👶';
+          $('growthSize').textContent = '出産予定日を設定すると表示されます';
+          $('growthChips').innerHTML = '';
+          $('growthFact').textContent = '👶タブで出産予定日を入れると、週ごとの赤ちゃんの様子がここに表示されます。';
+          for (let n = WEEK_MIN; n <= WEEK_MAX; n++) {
+            const el = document.createElement('div');
+            el.className = 'week';
+            el.innerHTML = `${n}週<small>&nbsp;</small>`;
+            track.appendChild(el);
+          }
+          return;
+        }
+
+        const { due, daysLeft, gestDays, week } = c;
+
+        $('dueShow').textContent = due.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+        $('countdown').textContent = daysLeft > 0
+          ? `${babyCall()}に会えるまで あと ${daysLeft} 日`
+          : daysLeft === 0 ? '今日が予定日！' : `予定日から ${-daysLeft} 日`;
+
+        $('gestation').textContent = gestDays >= 0 ? `${week}週${gestDays % 7}日` : 'まだこれから';
+        $('trimester').textContent = trimesterOf(week);
+
+        const next = MILESTONES.find(([d]) => d > gestDays);
+        $('milestone').textContent = next ? `${next[1]}まで${next[0] - gestDays}日` : '会える日まであと少し';
+
+        const pool = poolOf(week);
+        const poolTitle = trimesterOf(week);
+        $('pointHusbandTitle').textContent = poolTitle;
+        $('pointWifeTitle').textContent = poolTitle;
+        renderDaily(pool);
+
+        renderGrowth(viewWeek ?? week);
+
+        const MARK = { 16: '安定期', 20: '折り返し', 28: '後期', 36: '臨月', 37: '正期産', 40: '予定日' };
+        let activeEl = null;
+        for (let n = WEEK_MIN; n <= WEEK_MAX; n++) {
+          const el = document.createElement('div');
+          el.className = 'week' + (n === week ? ' active' : n < week ? ' past' : '');
+          el.innerHTML = `${n}週<small>${MARK[n] || '&nbsp;'}</small>`;
+          if (n === week) activeEl = el;
+          track.appendChild(el);
+        }
+        if (activeEl) {
+          requestAnimationFrame(() => {
+            track.scrollLeft = activeEl.offsetLeft - track.clientWidth / 2 + activeEl.clientWidth / 2;
+          });
+        }
+      }
+
+      /* ================= 連続チェックイン ================= */
+      (() => {
+        const st = load('streak', { count: 0, last: '' });
+        const yest = ymd(new Date(Date.now() - 86400000));
+        if (st.last !== todayYmd) {
+          st.count = st.last === yest ? st.count + 1 : 1;
+          st.last = todayYmd;
+          save('streak', st);
+        }
+        $('streak').innerHTML = `🔥 連続チェックイン <b>${st.count}</b> 日目`;
+      })();
+
+      /* ================= モード切り替え ================= */
       let role = load('role', 'husband');
 
       const applyRole = () => {
@@ -825,7 +1402,7 @@
       $('roleHusband').addEventListener('click', () => { role = 'husband'; save('role', role); applyRole(); });
       $('roleWife').addEventListener('click', () => { role = 'wife'; save('role', role); applyRole(); });
 
-      /* ---------- タブ ---------- */
+      /* ================= タブ ================= */
       const tabs = [...$$('.tabs button')];
 
       function activateTab(tab) {
@@ -835,16 +1412,27 @@
 
       tabs.forEach((tab) => tab.addEventListener('click', () => activateTab(tab)));
 
-      /* ---------- チェックリスト（自動保存＋同期） ---------- */
-      $$('.checklist input[type="checkbox"]').forEach((input) => {
-        input.checked = load(`check-${input.id}`, false);
+      /* ================= 固定チェックリスト（準備） ================= */
+      const PREP_IDS = ['b1', 'b2', 'b3', 'b4', 'p1', 'p2', 'p3', 'p4'];
+
+      const updatePrep = () => {
+        const done = PREP_IDS.filter((id) => $(id).checked).length;
+        const pct = Math.round((done / PREP_IDS.length) * 100);
+        $('prepPct').textContent = `${pct}%`;
+        $('prepFill').style.width = `${pct}%`;
+      };
+
+      PREP_IDS.forEach((id) => {
+        const input = $(id);
+        input.checked = load(`check-${id}`, false);
         input.addEventListener('change', () => {
-          save(`check-${input.id}`, input.checked);
-          syncPush(`checks/${input.id}`, input.checked);
+          save(`check-${id}`, input.checked);
+          syncPush(`checks/${id}`, input.checked);
+          updatePrep();
         });
       });
 
-      /* ---------- テキスト自動保存＋同期 ---------- */
+      /* ================= テキスト自動保存＋同期 ================= */
       const statusTimers = {};
       const pushTimers = {};
       $$('textarea[data-autosave]').forEach((field) => {
@@ -865,12 +1453,7 @@
         });
       });
 
-      /* ---------- 日時フォーマット ---------- */
-      const fmt = (ts) => new Date(ts).toLocaleString('ja-JP', {
-        month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'
-      });
-
-      /* ---------- 夫へのお願い ---------- */
+      /* ================= 夫へのお願い ================= */
       let requests = load('requests', []);
 
       const renderRequests = () => {
@@ -940,7 +1523,100 @@
       $('reqAdd').addEventListener('click', addRequest);
       $('reqInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') addRequest(); });
 
-      /* ---------- ふたりの交換メモ ---------- */
+      /* ================= 名前候補 ================= */
+      let names = load('names', []);
+
+      const renderNames = () => {
+        const list = $('nameList');
+        list.textContent = '';
+        $('nameEmpty').style.display = names.length ? 'none' : '';
+
+        names.forEach((n) => {
+          const li = document.createElement('li');
+          li.className = 'req-item';
+
+          const body = document.createElement('div');
+          body.className = 'req-text';
+          const strong = document.createElement('b');
+          strong.textContent = n.name;
+          body.appendChild(strong);
+          if (n.favH && n.favW) body.appendChild(document.createTextNode(' ✨ふたりのお気に入り'));
+          const meta = document.createElement('span');
+          meta.className = 'req-date';
+          const hearts = `${n.favH ? ' 💙夫' : ''}${n.favW ? ' 💗妻' : ''}`;
+          meta.textContent = `提案：${n.by === 'wife' ? '妻' : '夫'}${hearts}`;
+          body.appendChild(meta);
+
+          const fav = document.createElement('button');
+          fav.type = 'button';
+          const mine = role === 'wife' ? n.favW : n.favH;
+          fav.className = 'heart-btn' + (mine ? ' on' : '');
+          fav.textContent = mine ? '♥ いいね済' : '♡ いいね';
+          fav.addEventListener('click', () => {
+            if (role === 'wife') n.favW = !n.favW; else n.favH = !n.favH;
+            save('names', names);
+            syncPush('names', names);
+            renderNames();
+          });
+
+          const del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'del-btn';
+          del.textContent = '✕';
+          del.setAttribute('aria-label', '削除');
+          del.addEventListener('click', () => {
+            names = names.filter((x) => x !== n);
+            save('names', names);
+            syncPush('names', names);
+            renderNames();
+          });
+
+          li.appendChild(body);
+          li.appendChild(fav);
+          li.appendChild(del);
+          list.appendChild(li);
+        });
+      };
+
+      const addName = () => {
+        const name = $('nameInput').value.trim();
+        if (!name) return;
+        names.unshift({ name, by: role, favH: false, favW: false, createdAt: Date.now() });
+        save('names', names);
+        syncPush('names', names);
+        $('nameInput').value = '';
+        renderNames();
+      };
+
+      $('nameAdd').addEventListener('click', addName);
+      $('nameInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') addName(); });
+
+      /* ================= 胎動カウンター ================= */
+      let kicks = load('kicks', {});
+
+      const renderKicks = () => {
+        const count = kicks[todayYmd] || 0;
+        $('kickCountW').textContent = count;
+        const info = $('kickInfoH');
+        if (count > 0) {
+          info.style.display = '';
+          info.textContent = `👣 今日の胎動メモ：${count}回（妻モードで記録中）`;
+        } else {
+          info.style.display = 'none';
+        }
+      };
+
+      const setKicks = (delta) => {
+        kicks[todayYmd] = Math.max(0, (kicks[todayYmd] || 0) + delta);
+        save('kicks', kicks);
+        syncPush('kicks', kicks);
+        renderKicks();
+      };
+
+      $('kickAdd').addEventListener('click', () => setKicks(1));
+      $('kickUndo').addEventListener('click', () => setKicks(-1));
+
+      /* ================= ふたりの交換メモ ================= */
       let journal = load('journal', []);
 
       const renderJournal = () => {
@@ -993,7 +1669,7 @@
         renderJournal();
       });
 
-      /* ---------- 学ぶ ---------- */
+      /* ================= 学ぶ ================= */
       const lessons = {
         body: ['妊娠中のからだ', '体調の変化には個人差があります。「一般的には」よりも、目の前の本人の感覚を大切に。', [
           '予定を詰め込みすぎない',
@@ -1046,7 +1722,7 @@
         detail.appendChild(ul);
       }));
 
-      /* ---------- 同期用の公開API ---------- */
+      /* ================= 同期用の公開API ================= */
       const normList = (v) => Array.isArray(v) ? v.filter(Boolean) : (v ? Object.values(v) : []);
 
       window.guideApp = {
@@ -1055,9 +1731,18 @@
           $$('.checklist input[type="checkbox"]').forEach((i) => { checks[i.id] = i.checked; });
           const notes = {};
           NOTE_IDS.forEach((id) => { notes[id] = $(id).value; });
-          return { requests, journal, checks, notes };
+          return { settings, requests, journal, names, kicks, checks, notes };
         },
         applyRemote(data) {
+          if (data.settings) {
+            const merged = Object.assign({ dueDate: null, gender: 'secret', babyName: '' }, data.settings);
+            if (JSON.stringify(merged) !== JSON.stringify(settings)) {
+              settings = merged;
+              save('settings', settings);
+              refresh();
+            }
+          }
+
           requests = normList(data.requests);
           save('requests', requests);
           renderRequests();
@@ -1066,12 +1751,21 @@
           save('journal', journal);
           renderJournal();
 
+          names = normList(data.names);
+          save('names', names);
+          renderNames();
+
+          kicks = data.kicks || {};
+          save('kicks', kicks);
+          renderKicks();
+
           const checks = data.checks || {};
           $$('.checklist input[type="checkbox"]').forEach((i) => {
             const v = !!checks[i.id];
             if (i.checked !== v) i.checked = v;
             save(`check-${i.id}`, v);
           });
+          updatePrep();
 
           const notes = data.notes || {};
           NOTE_IDS.forEach((id) => {
@@ -1088,7 +1782,7 @@
         }
       };
 
-      /* ---------- 同期ボタン ---------- */
+      /* ================= 同期ボタン ================= */
       const needNet = () => alert('同期機能の読み込みに失敗しました。インターネット接続を確認して、ページを開き直してください。');
 
       $('syncCreate').addEventListener('click', () => {
@@ -1115,8 +1809,12 @@
         }
       });
 
-      /* ---------- 初期化 ---------- */
+      /* ================= 初期化 ================= */
+      refresh();
+      updatePrep();
       renderRequests();
+      renderNames();
+      renderKicks();
       renderJournal();
       applyRole();
     })();
