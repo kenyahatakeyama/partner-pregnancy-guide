@@ -4,8 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
-  <title>Partner Pregnancy Guide</title>
+  <title>ふたりの妊娠ガイド</title>
   <style>
     :root {
       color-scheme: light dark;
@@ -21,6 +20,8 @@
       --secondary-dark: #4a3d34;
       --accent-light: #d4897a;
       --accent-dark: #e09b8d;
+      --wife-light: #c97a95;
+      --wife-dark: #dd93ad;
       --muted-light: #b8a494;
       --muted-dark: #8a7a6f;
 
@@ -34,19 +35,12 @@
       --primary: light-dark(var(--primary-light), var(--primary-dark));
       --secondary: light-dark(var(--secondary-light), var(--secondary-dark));
       --accent: light-dark(var(--accent-light), var(--accent-dark));
+      --wife: light-dark(var(--wife-light), var(--wife-dark));
       --muted: light-dark(var(--muted-light), var(--muted-dark));
       --border: light-dark(var(--border-light), var(--border-dark));
       --input: light-dark(var(--input-light), var(--input-dark));
 
       --font-sans: -apple-system, system-ui, "Segoe UI", sans-serif;
-      --font-size-base: 15px;
-      --font-size-normal: max(13px, var(--font-size-base));
-      --font-size-h1: 2.2rem;
-      --font-size-h2: 1.5rem;
-      --font-size-h3: 1.1rem;
-      --line-height-base: 1.6;
-      --radius-lg: 16px;
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
       --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.1);
     }
 
@@ -57,32 +51,11 @@
         --primary: var(--primary-dark);
         --secondary: var(--secondary-dark);
         --accent: var(--accent-dark);
+        --wife: var(--wife-dark);
         --muted: var(--muted-dark);
         --border: var(--border-dark);
         --input: var(--input-dark);
       }
-    }
-
-    :root[data-theme="light"] {
-      --background: var(--bg-light);
-      --foreground: var(--fg-light);
-      --primary: var(--primary-light);
-      --secondary: var(--secondary-light);
-      --accent: var(--accent-light);
-      --muted: var(--muted-light);
-      --border: var(--border-light);
-      --input: var(--input-light);
-    }
-
-    :root[data-theme="dark"] {
-      --background: var(--bg-dark);
-      --foreground: var(--fg-dark);
-      --primary: var(--primary-dark);
-      --secondary: var(--secondary-dark);
-      --accent: var(--accent-dark);
-      --muted: var(--muted-dark);
-      --border: var(--border-dark);
-      --input: var(--input-dark);
     }
 
     * { box-sizing: border-box; }
@@ -91,33 +64,38 @@
       color: var(--foreground);
       background: var(--background);
       font-family: var(--font-sans);
-      font-size: var(--font-size-normal);
-      line-height: var(--line-height-base);
+      font-size: 15px;
+      line-height: 1.6;
       letter-spacing: -0.01em;
     }
 
     #app {
       display: flex;
       flex-direction: column;
-      gap: 28px;
+      gap: 24px;
       width: 100%;
       max-width: 760px;
       margin: 0 auto;
-      padding: 3rem 1.5rem;
+      padding: 2rem 1.25rem 4rem;
     }
 
+    /* ---- hero ---- */
     .hero {
       position: relative;
       display: grid;
       grid-template-columns: 1.4fr 0.85fr;
-      gap: 32px;
+      gap: 28px;
       align-items: end;
-      padding: 48px;
+      padding: 40px;
       background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
       color: #fff;
       border-radius: 24px;
       box-shadow: var(--shadow-md);
       overflow: hidden;
+    }
+
+    .mode-wife .hero {
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--wife) 100%);
     }
 
     .hero::before {
@@ -127,7 +105,7 @@
       right: -20%;
       width: 400px;
       height: 400px;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
       border-radius: 50%;
       pointer-events: none;
     }
@@ -135,212 +113,184 @@
     .eyebrow {
       position: relative;
       z-index: 1;
-      color: rgba(255, 255, 255, 0.8);
-      margin: 0 0 12px;
-      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.85);
+      margin: 0 0 10px;
+      font-size: 0.85rem;
       letter-spacing: 0.05em;
-      text-transform: uppercase;
     }
 
     h1 {
       position: relative;
       z-index: 1;
-      margin: 0 0 12px;
-      font-size: var(--font-size-h1);
+      margin: 0 0 10px;
+      font-size: 1.9rem;
       font-weight: 600;
-      line-height: 1.2;
+      line-height: 1.25;
       text-wrap: balance;
     }
 
-    .hero > div:first-child p {
-      position: relative;
-      z-index: 1;
-      margin: 0;
-      font-size: 1.05rem;
-      opacity: 0.95;
-    }
+    .hero-lead { position: relative; z-index: 1; margin: 0; opacity: 0.95; }
 
-    h2 {
-      margin: 0 0 20px;
-      font-size: var(--font-size-h2);
-      font-weight: 600;
-      color: var(--foreground);
-    }
-
-    h3 {
-      margin: 0 0 12px;
-      font-size: var(--font-size-h3);
-      font-weight: 600;
-      color: var(--foreground);
-    }
-
+    h2 { margin: 0 0 16px; font-size: 1.35rem; font-weight: 600; }
+    h3 { margin: 0 0 10px; font-size: 1.05rem; font-weight: 600; }
     p { margin: 0; }
 
     .due {
       position: relative;
       z-index: 2;
-      padding: 24px;
+      padding: 20px;
       background: rgba(255, 255, 255, 0.95);
       color: var(--fg-light);
       border-radius: 16px;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-      backdrop-filter: blur(10px);
     }
 
-    .due span { font-size: 0.9rem; opacity: 0.7; }
-    .due strong { display: block; margin-top: 6px; font-size: 1.35rem; font-weight: 600; }
-    .due #countdown { display: block; margin-top: 8px; font-size: 0.95rem; color: var(--primary-light); font-weight: 500; }
+    .due span { font-size: 0.85rem; opacity: 0.7; }
+    .due strong { display: block; margin-top: 4px; font-size: 1.2rem; font-weight: 600; }
+    .due #countdown { display: block; margin-top: 6px; font-size: 0.9rem; color: var(--primary-light); font-weight: 500; }
 
-    .stats {
+    .hero-art {
+      position: relative;
+      z-index: 2;
+      justify-self: end;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin: 0;
+      place-items: center;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+      font-size: 3.8rem;
+      margin-bottom: 14px;
+      transform: rotate(-10deg);
     }
+
+    .hero-art span { transform: rotate(10deg); display: block; }
+
+    /* ---- role toggle ---- */
+    .role-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      padding: 6px;
+      background: var(--input);
+      border-radius: 999px;
+    }
+
+    .role-toggle button {
+      appearance: none;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--foreground);
+      font: inherit;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .role-toggle button.active-husband {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .role-toggle button.active-wife {
+      background: linear-gradient(135deg, var(--wife) 0%, var(--accent) 100%);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* ---- stats / week ---- */
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 
     .stat {
-      position: relative;
-      padding: 24px;
+      padding: 20px;
       background: linear-gradient(135deg, rgba(200, 153, 104, 0.05) 0%, rgba(212, 137, 122, 0.03) 100%);
       border: 1px solid var(--border);
       border-radius: 16px;
-      transition: all 0.3s ease;
     }
 
-    .stat:hover {
-      transform: translateY(-4px);
-      border-color: var(--primary);
-      box-shadow: var(--shadow-md);
-    }
+    .stat b { display: block; font-size: 1.4rem; font-weight: 600; color: var(--primary); margin-bottom: 4px; }
+    .stat span { color: var(--muted); font-size: 0.85rem; }
 
-    .stat b {
-      display: block;
-      font-size: 1.6rem;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 6px;
-    }
-
-    .stat span {
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .week-track {
-      display: grid;
-      grid-template-columns: repeat(9, 1fr);
-      gap: 10px;
-      margin: 0;
-    }
+    .week-track { display: grid; grid-template-columns: repeat(9, 1fr); gap: 8px; }
 
     .week {
-      position: relative;
-      min-height: 64px;
-      padding: 8px 4px;
+      min-height: 58px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary) 100%);
+      background: var(--secondary);
       color: var(--foreground);
-      text-align: center;
       border-radius: 14px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 500;
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       border: 2px solid transparent;
     }
 
-    .week small {
-      display: block;
-      font-size: 0.75rem;
-      opacity: 0.6;
-      margin-top: 2px;
-    }
+    .week small { font-size: 0.72rem; opacity: 0.6; }
 
     .week.active {
       background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
-      color: white;
+      color: #fff;
       font-weight: 600;
-      transform: scale(1.08);
+      transform: scale(1.06);
       box-shadow: var(--shadow-md);
-      border-color: rgba(255, 255, 255, 0.3);
     }
 
-    .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin: 0 0 24px;
-    }
+    /* ---- tabs ---- */
+    .tabs { display: flex; flex-wrap: wrap; gap: 10px; }
 
     .tabs button {
       appearance: none;
       border: 2px solid var(--border);
-      padding: 10px 18px;
+      padding: 10px 16px;
       border-radius: 999px;
       background: transparent;
       color: var(--foreground);
       font: inherit;
       font-weight: 500;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.25s ease;
     }
 
-    .tabs button:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-      transform: translateY(-2px);
-    }
+    .tabs button:hover { border-color: var(--primary); }
 
     .tabs button[aria-selected="true"] {
       background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
       border-color: transparent;
-      color: white;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      color: #fff;
+    }
+
+    .mode-wife .tabs button[aria-selected="true"] {
+      background: linear-gradient(135deg, var(--wife) 0%, var(--accent) 100%);
     }
 
     .panel { display: none; }
-    .panel.active { display: block; animation: fadeIn 0.3s ease; }
+    .panel.active { display: flex; flex-direction: column; gap: 22px; animation: fadeIn 0.25s ease; }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 28px;
-    }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .section { display: flex; flex-direction: column; gap: 12px; }
 
-    .section {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .checklist {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
+    /* ---- checklist ---- */
+    .checklist { list-style: none; padding: 0; margin: 0; }
 
     .checklist li {
       display: flex;
       gap: 12px;
       align-items: flex-start;
-      padding: 14px 0;
+      padding: 13px 0;
       border-bottom: 1px solid var(--border);
-      transition: all 0.2s ease;
     }
 
     .checklist li:last-child { border-bottom: none; }
-    .checklist li:hover { padding-left: 4px; }
 
     .checklist input[type="checkbox"] {
       margin-top: 4px;
@@ -351,32 +301,24 @@
       flex-shrink: 0;
     }
 
-    .checklist label {
-      cursor: pointer;
-      flex: 1;
-    }
+    .checklist label { cursor: pointer; flex: 1; }
+    .checklist input:checked + label { color: var(--muted); text-decoration: line-through; }
 
-    .checklist input:checked + label {
-      color: var(--muted);
-      text-decoration: line-through;
-    }
-
+    /* ---- callout / warning ---- */
     .callout {
-      padding: 24px;
-      background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary) 100%);
-      color: var(--foreground);
+      padding: 20px;
+      background: var(--secondary);
       border-radius: 16px;
       border-left: 4px solid var(--primary);
     }
 
-    .callout strong {
-      display: block;
-      color: var(--primary);
-      margin-bottom: 8px;
-    }
+    .callout strong { display: block; color: var(--primary); margin-bottom: 6px; }
+
+    .callout.wife-tone { border-left-color: var(--wife); }
+    .callout.wife-tone strong { color: var(--wife); }
 
     .warning {
-      padding: 24px;
+      padding: 20px;
       background: linear-gradient(135deg, rgba(212, 137, 122, 0.08) 0%, rgba(212, 137, 122, 0.04) 100%);
       border: 2px solid var(--accent);
       border-radius: 16px;
@@ -384,155 +326,183 @@
 
     .warning strong { color: var(--accent); }
 
-    .learning {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
+    /* ---- lessons ---- */
+    .learning { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 
     .lesson {
       text-align: left;
-      padding: 24px;
+      padding: 20px;
       border: 2px solid var(--border);
       border-radius: 16px;
-      background: linear-gradient(135deg, rgba(200, 153, 104, 0.03) 0%, transparent 100%);
+      background: transparent;
       color: var(--foreground);
       font: inherit;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.25s ease;
     }
 
-    .lesson:hover {
-      transform: translateY(-6px);
-      border-color: var(--primary);
-      box-shadow: var(--shadow-md);
-      background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary) 100%);
-    }
-
-    .lesson b {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 8px;
-      font-size: 1.05rem;
-      color: var(--primary);
-    }
-
-    .lesson span {
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
+    .lesson:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .lesson b { display: block; font-weight: 600; margin-bottom: 6px; color: var(--primary); }
+    .lesson span { color: var(--muted); font-size: 0.87rem; }
+    .spark { display: inline-block; margin-right: 6px; }
 
     .detail {
-      min-height: 140px;
-      padding: 28px;
+      min-height: 120px;
+      padding: 24px;
       border-left: 5px solid var(--primary);
       background: linear-gradient(135deg, rgba(200, 153, 104, 0.06) 0%, transparent 100%);
       border-radius: 12px;
-      animation: slideIn 0.4s ease;
     }
 
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
+    .detail ul { margin: 10px 0 0; padding-left: 20px; }
+    .detail li { margin-bottom: 6px; }
 
-    .detail h3 { margin: 0 0 12px; }
-    .detail ul { margin: 12px 0 0; padding-left: 20px; }
-    .detail li { margin-bottom: 8px; }
-
+    /* ---- notes (auto-save) ---- */
     .note {
       width: 100%;
-      min-height: 140px;
-      padding: 16px;
+      min-height: 120px;
+      padding: 14px;
       border: 2px solid var(--border);
       border-radius: 12px;
       background: transparent;
       color: var(--foreground);
       font: inherit;
       resize: vertical;
-      transition: all 0.2s ease;
+      transition: border-color 0.2s ease;
     }
 
-    .note:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(200, 153, 104, 0.1);
-    }
+    .note:focus { outline: none; border-color: var(--primary); }
 
-    .save-row {
+    .autosave-note {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-top: 12px;
+      gap: 6px;
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.83rem;
+      min-height: 1.4em;
     }
 
-    .save {
-      border: none;
-      padding: 10px 20px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
-      color: white;
+    .autosave-note.saved { color: #4c9a5f; }
+
+    /* ---- request list ---- */
+    .add-row { display: flex; gap: 10px; }
+
+    .add-row input {
+      flex: 1;
+      padding: 12px 14px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: transparent;
+      color: var(--foreground);
       font: inherit;
-      font-weight: 500;
+    }
+
+    .add-row input:focus { outline: none; border-color: var(--wife); }
+
+    .add-btn {
+      border: none;
+      padding: 12px 20px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--wife) 0%, var(--accent) 100%);
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
+      white-space: nowrap;
     }
 
-    .save:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    .req-list, .journal-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+
+    .req-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(201, 122, 149, 0.05) 0%, transparent 100%);
     }
 
-    .hero-art {
-      position: relative;
-      z-index: 2;
-      justify-self: end;
-      display: grid;
-      place-items: center;
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.95);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
-      font-size: 5rem;
-      transform: rotate(-12deg) scale(1);
-      animation: float 3s ease-in-out infinite;
+    .req-item input[type="checkbox"] {
+      margin-top: 3px;
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary);
+      cursor: pointer;
+      flex-shrink: 0;
     }
 
-    @keyframes float {
-      0%, 100% { transform: rotate(-12deg) translateY(0px); }
-      50% { transform: rotate(-12deg) translateY(-8px); }
+    .req-item .req-text { flex: 1; overflow-wrap: anywhere; }
+    .req-item.done .req-text { color: var(--muted); text-decoration: line-through; }
+    .req-item .req-date { font-size: 0.78rem; color: var(--muted); display: block; margin-top: 2px; }
+
+    .del-btn {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 8px;
+      flex-shrink: 0;
     }
 
-    .hero-art span { transform: rotate(12deg); display: block; }
-    .spark { display: inline-block; color: var(--primary); margin-right: 6px; }
+    .del-btn:hover { color: var(--accent); background: var(--input); }
+
+    .empty-hint { color: var(--muted); font-size: 0.9rem; padding: 8px 2px; }
+
+    /* ---- journal ---- */
+    .journal-entry {
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .journal-meta { display: flex; align-items: center; gap: 10px; }
+
+    .badge-role {
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 3px 12px;
+      border-radius: 999px;
+      color: #fff;
+    }
+
+    .badge-role.husband { background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%); }
+    .badge-role.wife { background: linear-gradient(135deg, var(--wife) 0%, var(--accent) 100%); }
+
+    .journal-meta time { font-size: 0.8rem; color: var(--muted); flex: 1; }
+    .journal-entry p { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+    /* ---- role visibility ---- */
+    .mode-husband .wife-only { display: none !important; }
+    .mode-wife .husband-only { display: none !important; }
 
     @media (max-width: 600px) {
-      #app { gap: 20px; padding: 2rem 1rem; }
-      .hero {
-        grid-template-columns: 1fr;
-        gap: 24px;
-        padding: 32px;
-      }
-      .hero-art { justify-self: center; }
-      .two-col { grid-template-columns: 1fr; gap: 20px; }
+      #app { gap: 18px; padding: 1.25rem 1rem 3rem; }
+      .hero { grid-template-columns: 1fr; gap: 18px; padding: 26px; }
+      .hero-art { display: none; }
+      .two-col { grid-template-columns: 1fr; gap: 18px; }
       .learning { grid-template-columns: 1fr; }
-      .stats { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .stat { padding: 14px; }
+      .stat b { font-size: 1.1rem; }
       .week-track { grid-template-columns: repeat(5, 1fr); }
-      .tabs { gap: 8px; }
-      .tabs button { padding: 8px 14px; font-size: 0.9rem; }
+      h1 { font-size: 1.5rem; }
     }
   </style>
 </head>
 <body>
-  <main id="app" aria-label="妊娠と子育てのパートナーガイド">
+  <main id="app" class="mode-husband" aria-label="ふたりの妊娠ガイド">
+
     <section class="hero">
       <div>
-        <p class="eyebrow">パートナーのための妊娠・子育てガイド</p>
+        <p class="eyebrow">ふたりで使う妊娠・子育てガイド</p>
         <h1>いっしょに、安心して迎える準備を。</h1>
-        <p>知る・話す・動くを、今の週数に合わせて。</p>
+        <p class="hero-lead">知る・話す・支え合うを、今の週数に合わせて。</p>
       </div>
       <div>
         <div class="hero-art" aria-hidden="true"><span>🧸</span></div>
@@ -544,19 +514,15 @@
       </div>
     </section>
 
+    <div class="role-toggle" role="group" aria-label="モード切り替え">
+      <button type="button" id="roleHusband" class="active-husband">👨 夫モード</button>
+      <button type="button" id="roleWife">👩 妻モード</button>
+    </div>
+
     <div class="stats" aria-label="現在の妊娠状況">
-      <div class="stat">
-        <b id="gestation">25週</b>
-        <span>妊娠週数の目安</span>
-      </div>
-      <div class="stat">
-        <b>妊娠後期</b>
-        <span>28週から</span>
-      </div>
-      <div class="stat">
-        <b>今週のテーマ</b>
-        <span>休息と産前準備</span>
-      </div>
+      <div class="stat"><b id="gestation">--</b><span>妊娠週数の目安</span></div>
+      <div class="stat"><b>妊娠後期</b><span>28週から</span></div>
+      <div class="stat"><b>今週のテーマ</b><span>休息と産前準備</span></div>
     </div>
 
     <section aria-label="週数の見通し">
@@ -565,17 +531,25 @@
     </section>
 
     <nav class="tabs" role="tablist" aria-label="ガイドの内容">
-      <button role="tab" aria-selected="true" aria-controls="today" id="tab-today">今日の支え方</button>
-      <button role="tab" aria-selected="false" aria-controls="learn" id="tab-learn">学ぶ</button>
-      <button role="tab" aria-selected="false" aria-controls="prepare" id="tab-prepare">準備する</button>
-      <button role="tab" aria-selected="false" aria-controls="notes" id="tab-notes">ふたりのメモ</button>
+      <button role="tab" class="husband-only" data-tab="today" data-first="husband">今日の支え方</button>
+      <button role="tab" class="wife-only" data-tab="myday" data-first="wife">今日のわたし</button>
+      <button role="tab" class="wife-only" data-tab="requests">夫へのお願い</button>
+      <button role="tab" data-tab="learn">学ぶ</button>
+      <button role="tab" class="husband-only" data-tab="prepare">準備する</button>
+      <button role="tab" data-tab="notes">ふたりのメモ</button>
     </nav>
 
-    <section id="today" class="panel active" role="tabpanel" aria-labelledby="tab-today">
+    <!-- ============ 夫：今日の支え方 ============ -->
+    <section id="today" class="panel husband-only" role="tabpanel">
+      <div class="section">
+        <h2>妻からのお願い</h2>
+        <ul class="req-list" id="reqListHusband"></ul>
+        <p class="empty-hint" id="reqEmptyHusband">まだお願いは届いていません。妻モードから追加できます。</p>
+      </div>
       <div class="two-col">
         <div class="section">
           <h2>今日できる3つ</h2>
-          <ul class="checklist" data-list="today">
+          <ul class="checklist">
             <li><input id="t1" type="checkbox"><label for="t1">「体調はどう？」と、答えを急がずに聞く</label></li>
             <li><input id="t2" type="checkbox"><label for="t2">家事を一つ引き受け、休める時間をつくる</label></li>
             <li><input id="t3" type="checkbox"><label for="t3">次回健診・気になることを一緒に確認する</label></li>
@@ -584,16 +558,71 @@
         <div class="section">
           <h2>この時期のポイント</h2>
           <div class="callout">
-            <strong>25〜27週ごろ</strong><br>お腹の大きさや動きで、疲れ・眠りにくさ・腰の負担が増えやすい時期です。正解を急がず、本人が心地よい方法を一緒に探しましょう。
+            <strong>25〜27週ごろ</strong>
+            お腹の大きさや動きで、疲れ・眠りにくさ・腰の負担が増えやすい時期です。正解を急がず、本人が心地よい方法を一緒に探しましょう。
           </div>
         </div>
       </div>
       <div class="warning">
-        <strong>受診の目安</strong> 出血、破水の疑い、強い腹痛、規則的な張り、急なむくみ・強い頭痛、胎動が明らかに少ないと感じるときは、自己判断せず産院へ連絡してください。
+        <strong>受診の目安</strong>　出血、破水の疑い、強い腹痛、規則的な張り、急なむくみ・強い頭痛、胎動が明らかに少ないと感じるときは、自己判断せず産院へ連絡してください。
       </div>
     </section>
 
-    <section id="learn" class="panel" role="tabpanel" aria-labelledby="tab-learn">
+    <!-- ============ 妻：今日のわたし ============ -->
+    <section id="myday" class="panel wife-only" role="tabpanel">
+      <div class="two-col">
+        <div class="section">
+          <h2>今日のセルフケア</h2>
+          <ul class="checklist">
+            <li><input id="w1" type="checkbox"><label for="w1">がんばりすぎない。休む時間を先に確保する</label></li>
+            <li><input id="w2" type="checkbox"><label for="w2">つらいこと・不安を一つ、言葉にして伝える</label></li>
+            <li><input id="w3" type="checkbox"><label for="w3">水分と食事、からだが求めるものをとる</label></li>
+          </ul>
+        </div>
+        <div class="section">
+          <h2>この時期のわたし</h2>
+          <div class="callout wife-tone">
+            <strong>25〜27週ごろ</strong>
+            眠りが浅くなったり、腰やお腹に負担を感じやすい時期。「甘えている」のではなく、からだが二人分働いています。頼ることは、赤ちゃんのためでもあります。
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <h2>からだと気持ちのメモ</h2>
+        <textarea class="note" id="wifeBodyNote" data-autosave placeholder="例：今日はむくみが強い。夜中に何度も目が覚める。健診で聞いてみよう。"></textarea>
+        <p class="autosave-note" data-status-for="wifeBodyNote">入力すると自動で保存されます</p>
+      </div>
+      <div class="warning">
+        <strong>受診の目安</strong>　出血、破水の疑い、強い腹痛、規則的な張り、急なむくみ・強い頭痛、胎動が明らかに少ないと感じるときは、我慢せず産院へ連絡してください。
+      </div>
+    </section>
+
+    <!-- ============ 妻：夫へのお願い ============ -->
+    <section id="requests" class="panel wife-only" role="tabpanel">
+      <div class="section">
+        <h2>夫へのお願いを追加</h2>
+        <div class="add-row">
+          <input type="text" id="reqInput" maxlength="200" placeholder="例：今週はお風呂掃除をお願いしたい">
+          <button type="button" class="add-btn" id="reqAdd">追加する</button>
+        </div>
+        <p class="autosave-note">追加すると夫モードの「今日の支え方」に表示されます。完了すると打ち消し線がつきます。</p>
+      </div>
+      <div class="section">
+        <h2>お願いリスト</h2>
+        <ul class="req-list" id="reqListWife"></ul>
+        <p class="empty-hint" id="reqEmptyWife">まだお願いはありません。小さなことから気軽に。</p>
+      </div>
+      <div class="section">
+        <h2>伝え方のヒント</h2>
+        <div class="callout wife-tone">
+          <strong>具体的に、短く、一つずつ</strong>
+          「察してほしい」は夫には難易度が高め。「〇〇してくれると助かる」と行動で伝えると届きやすくなります。やってくれたら「助かった」と一言返すと、次につながります。
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 共通：学ぶ ============ -->
+    <section id="learn" class="panel" role="tabpanel">
       <div class="section">
         <h2>知りたいテーマを選ぶ</h2>
         <div class="learning">
@@ -602,7 +631,7 @@
           <button class="lesson" data-lesson="birth"><b><span class="spark">✧</span>出産の準備</b><span>バースプラン・連絡の段取り</span></button>
           <button class="lesson" data-lesson="newborn"><b><span class="spark">☾</span>産後と赤ちゃん</b><span>回復・授乳・生活リズム</span></button>
           <button class="lesson" data-lesson="systems"><b><span class="spark">✦</span>手続きと制度</b><span>勤務先・自治体に確認すること</span></button>
-          <button class="lesson" data-lesson="partner"><b><span class="spark">♡</span>パートナーの役割</b><span>主体的に担うために</span></button>
+          <button class="lesson" data-lesson="team"><b><span class="spark">♡</span>ふたりのチームワーク</b><span>お互いに気持ちよく頼り合う</span></button>
         </div>
       </div>
       <article class="detail" id="lessonDetail" aria-live="polite">
@@ -616,11 +645,12 @@
       </article>
     </section>
 
-    <section id="prepare" class="panel" role="tabpanel" aria-labelledby="tab-prepare">
+    <!-- ============ 夫：準備する ============ -->
+    <section id="prepare" class="panel husband-only" role="tabpanel">
       <div class="two-col">
         <div class="section">
           <h2>出産までに</h2>
-          <ul class="checklist" data-list="birth">
+          <ul class="checklist">
             <li><input id="b1" type="checkbox"><label for="b1">産院への連絡方法・夜間連絡先を確認</label></li>
             <li><input id="b2" type="checkbox"><label for="b2">入院バッグと必要書類を一緒に準備</label></li>
             <li><input id="b3" type="checkbox"><label for="b3">陣痛・破水時の移動手段を決める</label></li>
@@ -629,7 +659,7 @@
         </div>
         <div class="section">
           <h2>産後の生活を守る</h2>
-          <ul class="checklist" data-list="post">
+          <ul class="checklist">
             <li><input id="p1" type="checkbox"><label for="p1">食事・洗濯・買い物の分担を決める</label></li>
             <li><input id="p2" type="checkbox"><label for="p2">頼れる家族・地域サービスを洗い出す</label></li>
             <li><input id="p3" type="checkbox"><label for="p3">睡眠を交代で確保する方法を話す</label></li>
@@ -639,23 +669,28 @@
       </div>
     </section>
 
-    <section id="notes" class="panel" role="tabpanel" aria-labelledby="tab-notes">
+    <!-- ============ 共通：ふたりのメモ ============ -->
+    <section id="notes" class="panel" role="tabpanel">
+      <div class="section">
+        <h2>ふたりの交換メモ</h2>
+        <textarea class="note" id="journalInput" placeholder="例：今日、胎動が強かった！／ 例：帰りにいちご買ってくるね"></textarea>
+        <div class="add-row">
+          <p class="autosave-note" style="flex:1">書いた人（今のモード）と日時が記録されます</p>
+          <button type="button" class="add-btn" id="journalAdd">メモを残す</button>
+        </div>
+        <ul class="journal-list" id="journalList"></ul>
+        <p class="empty-hint" id="journalEmpty">まだメモはありません。ひとこと日記のように使えます。</p>
+      </div>
       <div class="two-col">
         <div class="section">
           <h2>健診で聞きたいこと</h2>
-          <textarea class="note" id="clinicNote" placeholder="例：むくみが気になる。家でできる対策は？"></textarea>
-          <div class="save-row">
-            <span id="clinicSaved">この端末に保存されます</span>
-            <button class="save" data-save="clinicNote">保存</button>
-          </div>
+          <textarea class="note" id="clinicNote" data-autosave placeholder="例：むくみが気になる。家でできる対策は？"></textarea>
+          <p class="autosave-note" data-status-for="clinicNote">入力すると自動で保存されます</p>
         </div>
         <div class="section">
           <h2>ふたりで話したいこと</h2>
-          <textarea class="note" id="coupleNote" placeholder="例：産後、どんなサポートがあると安心？"></textarea>
-          <div class="save-row">
-            <span id="coupleSaved">この端末に保存されます</span>
-            <button class="save" data-save="coupleNote">保存</button>
-          </div>
+          <textarea class="note" id="coupleNote" data-autosave placeholder="例：産後、どんなサポートがあると安心？"></textarea>
+          <p class="autosave-note" data-status-for="coupleNote">入力すると自動で保存されます</p>
         </div>
       </div>
     </section>
@@ -663,36 +698,219 @@
 
   <script>
     (() => {
-      // Utility functions
+      const app = document.getElementById('app');
       const $ = (id) => document.getElementById(id);
       const $$ = (sel) => document.querySelectorAll(sel);
-      const getStorageKey = (id) => `pregnancy-guide-${id}`;
+      const KEY = (id) => `pregnancy-guide-${id}`;
 
-      // Date and week calculations
+      const load = (id, fallback) => {
+        try {
+          const raw = localStorage.getItem(KEY(id));
+          return raw === null ? fallback : JSON.parse(raw);
+        } catch { return fallback; }
+      };
+      const save = (id, value) => localStorage.setItem(KEY(id), JSON.stringify(value));
+
+      /* ---------- 週数計算 ---------- */
       const dueDate = new Date(2026, 9, 23);
       dueDate.setHours(0, 0, 0, 0);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const daysUntilDue = Math.ceil((dueDate - today) / 86400000);
-      const safeDaysUntilDue = Math.max(0, daysUntilDue);
-      const gestationDays = Math.max(0, 280 - safeDaysUntilDue);
-      const weeks = Math.floor(gestationDays / 7);
-      const days = gestationDays % 7;
+      const daysLeft = Math.max(0, Math.ceil((dueDate - today) / 86400000));
+      const gestDays = Math.max(0, 280 - daysLeft);
+      const weeks = Math.floor(gestDays / 7);
 
-      // Update countdown and gestation
-      $('countdown').textContent = safeDaysUntilDue ? `あと ${safeDaysUntilDue} 日` : '出産予定日を過ぎています';
-      $('gestation').textContent = `${weeks}週${days}日`;
+      $('countdown').textContent = daysLeft ? `あと ${daysLeft} 日` : '出産予定日を過ぎています';
+      $('gestation').textContent = `${weeks}週${gestDays % 7}日`;
 
-      // Build week track
-      const weekTrack = $('weekTrack');
-      [24, 26, 28, 30, 32, 34, 36, 38, 40].forEach((weekNum) => {
+      const track = $('weekTrack');
+      [24, 26, 28, 30, 32, 34, 36, 38, 40].forEach((n) => {
         const el = document.createElement('div');
-        el.className = 'week' + (weeks >= weekNum && weeks < weekNum + 2 ? ' active' : '');
-        el.innerHTML = `${weekNum}週<small>${weekNum === 28 ? '後期' : ' '}</small>`;
-        weekTrack.appendChild(el);
+        el.className = 'week' + (weeks >= n && weeks < n + 2 ? ' active' : '');
+        el.innerHTML = `${n}週<small>${n === 28 ? '後期' : ' '}</small>`;
+        track.appendChild(el);
       });
 
-      // Lesson content
+      /* ---------- モード切り替え ---------- */
+      let role = load('role', 'husband');
+
+      const applyRole = () => {
+        app.classList.toggle('mode-husband', role === 'husband');
+        app.classList.toggle('mode-wife', role === 'wife');
+        $('roleHusband').className = role === 'husband' ? 'active-husband' : '';
+        $('roleWife').className = role === 'wife' ? 'active-wife' : '';
+        const current = document.querySelector('.tabs button[aria-selected="true"]');
+        const hidden = current && (
+          (role === 'husband' && current.classList.contains('wife-only')) ||
+          (role === 'wife' && current.classList.contains('husband-only'))
+        );
+        if (!current || hidden) {
+          const first = document.querySelector(`.tabs button[data-first="${role}"]`);
+          if (first) activateTab(first);
+        }
+      };
+
+      $('roleHusband').addEventListener('click', () => { role = 'husband'; save('role', role); applyRole(); });
+      $('roleWife').addEventListener('click', () => { role = 'wife'; save('role', role); applyRole(); });
+
+      /* ---------- タブ ---------- */
+      const tabs = [...$$('.tabs button')];
+
+      function activateTab(tab) {
+        tabs.forEach((t) => t.setAttribute('aria-selected', t === tab));
+        $$('.panel').forEach((p) => p.classList.toggle('active', p.id === tab.dataset.tab));
+      }
+
+      tabs.forEach((tab) => tab.addEventListener('click', () => activateTab(tab)));
+
+      /* ---------- チェックリスト（自動保存） ---------- */
+      $$('.checklist input[type="checkbox"]').forEach((input) => {
+        input.checked = load(`check-${input.id}`, false);
+        input.addEventListener('change', () => save(`check-${input.id}`, input.checked));
+      });
+
+      /* ---------- テキスト自動保存 ---------- */
+      const statusTimers = {};
+      $$('textarea[data-autosave]').forEach((field) => {
+        field.value = load(`note-${field.id}`, '');
+        const status = document.querySelector(`[data-status-for="${field.id}"]`);
+        field.addEventListener('input', () => {
+          save(`note-${field.id}`, field.value);
+          if (!status) return;
+          status.textContent = '✓ 保存しました';
+          status.classList.add('saved');
+          clearTimeout(statusTimers[field.id]);
+          statusTimers[field.id] = setTimeout(() => {
+            status.textContent = '入力すると自動で保存されます';
+            status.classList.remove('saved');
+          }, 1600);
+        });
+      });
+
+      /* ---------- 日時フォーマット ---------- */
+      const fmt = (ts) => new Date(ts).toLocaleString('ja-JP', {
+        month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+
+      /* ---------- 夫へのお願い ---------- */
+      let requests = load('requests', []);
+
+      const renderRequests = () => {
+        const listW = $('reqListWife');
+        const listH = $('reqListHusband');
+        listW.textContent = '';
+        listH.textContent = '';
+        $('reqEmptyWife').style.display = requests.length ? 'none' : '';
+        $('reqEmptyHusband').style.display = requests.length ? 'none' : '';
+
+        requests.forEach((req) => {
+          [listW, listH].forEach((list) => {
+            const li = document.createElement('li');
+            li.className = 'req-item' + (req.done ? ' done' : '');
+
+            const check = document.createElement('input');
+            check.type = 'checkbox';
+            check.checked = req.done;
+            check.setAttribute('aria-label', '完了');
+            check.addEventListener('change', () => {
+              req.done = check.checked;
+              save('requests', requests);
+              renderRequests();
+            });
+
+            const body = document.createElement('div');
+            body.className = 'req-text';
+            body.textContent = req.text;
+            const date = document.createElement('span');
+            date.className = 'req-date';
+            date.textContent = fmt(req.createdAt) + (req.done ? '・完了 ✓' : '');
+            body.appendChild(date);
+
+            li.appendChild(check);
+            li.appendChild(body);
+
+            if (list === listW) {
+              const del = document.createElement('button');
+              del.type = 'button';
+              del.className = 'del-btn';
+              del.textContent = '✕';
+              del.setAttribute('aria-label', '削除');
+              del.addEventListener('click', () => {
+                requests = requests.filter((r) => r !== req);
+                save('requests', requests);
+                renderRequests();
+              });
+              li.appendChild(del);
+            }
+            list.appendChild(li);
+          });
+        });
+      };
+
+      const addRequest = () => {
+        const text = $('reqInput').value.trim();
+        if (!text) return;
+        requests.unshift({ text, done: false, createdAt: Date.now() });
+        save('requests', requests);
+        $('reqInput').value = '';
+        renderRequests();
+      };
+
+      $('reqAdd').addEventListener('click', addRequest);
+      $('reqInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') addRequest(); });
+
+      /* ---------- ふたりの交換メモ ---------- */
+      let journal = load('journal', []);
+
+      const renderJournal = () => {
+        const list = $('journalList');
+        list.textContent = '';
+        $('journalEmpty').style.display = journal.length ? 'none' : '';
+
+        journal.forEach((entry) => {
+          const li = document.createElement('li');
+          li.className = 'journal-entry';
+
+          const meta = document.createElement('div');
+          meta.className = 'journal-meta';
+          const badge = document.createElement('span');
+          badge.className = 'badge-role ' + entry.role;
+          badge.textContent = entry.role === 'wife' ? '👩 妻' : '👨 夫';
+          const time = document.createElement('time');
+          time.textContent = fmt(entry.createdAt);
+          const del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'del-btn';
+          del.textContent = '✕';
+          del.setAttribute('aria-label', '削除');
+          del.addEventListener('click', () => {
+            journal = journal.filter((j) => j !== entry);
+            save('journal', journal);
+            renderJournal();
+          });
+          meta.appendChild(badge);
+          meta.appendChild(time);
+          meta.appendChild(del);
+
+          const body = document.createElement('p');
+          body.textContent = entry.text;
+
+          li.appendChild(meta);
+          li.appendChild(body);
+          list.appendChild(li);
+        });
+      };
+
+      $('journalAdd').addEventListener('click', () => {
+        const text = $('journalInput').value.trim();
+        if (!text) return;
+        journal.unshift({ role, text, createdAt: Date.now() });
+        save('journal', journal);
+        $('journalInput').value = '';
+        renderJournal();
+      });
+
+      /* ---------- 学ぶ ---------- */
       const lessons = {
         body: ['妊娠中のからだ', '体調の変化には個人差があります。「一般的には」よりも、目の前の本人の感覚を大切に。', [
           '予定を詰め込みすぎない',
@@ -707,11 +925,11 @@
         birth: ['出産の準備', '産院の方針を確認し、希望と緊急時の動きを事前に共有しておくと安心です。', [
           'バースプランを一緒に読む',
           '連絡・移動・上の子の対応を決める',
-          '陣痛時にしてほしいことを聞く'
+          '陣痛時にしてほしいこと・してほしくないことを共有する'
         ]],
         newborn: ['産後と赤ちゃん', '産後は回復の途中です。赤ちゃんの世話と同じくらい、母体の休息を優先しましょう。', [
-          'パートナーが家事と外部連絡を担う',
-          '授乳以外のケアを先回りして担う',
+          '家事と外部連絡はパートナーが担う',
+          '授乳以外のケアは先回りして引き受ける',
           '気分の落ち込みが続くときは相談先につなぐ'
         ]],
         systems: ['手続きと制度', '使える制度は家庭や勤務先で異なります。早めに担当窓口へ確認しましょう。', [
@@ -719,60 +937,36 @@
           '自治体の妊産婦・子育て支援を確認',
           '必要書類と期限をリスト化'
         ]],
-        partner: ['パートナーの役割', '「手伝う」ではなく、家族の暮らしを自分の担当として把握する姿勢が大切です。', [
-          '見えない家事も含めて担当を持つ',
-          '指示待ちにせず、確認して行動する',
-          '自分の不安も信頼できる相手に話す'
+        team: ['ふたりのチームワーク', '「手伝う／手伝ってもらう」ではなく、同じチームとして暮らしを運営する意識が土台になります。', [
+          '見えない家事も含めて、担当を言葉にして分ける',
+          'お願いは具体的に、感謝はその場で伝える',
+          'どちらかが限界になる前に、外部の助けも検討する'
         ]]
       };
 
-      // Tab switching
-      const tabs = $$('[role="tab"]');
-      tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          tabs.forEach(t => t.setAttribute('aria-selected', t === tab));
-          $$('.panel').forEach(panel => {
-            panel.classList.toggle('active', panel.id === tab.getAttribute('aria-controls'));
-          });
+      $$('.lesson').forEach((btn) => btn.addEventListener('click', () => {
+        const [title, text, items] = lessons[btn.dataset.lesson];
+        const detail = $('lessonDetail');
+        detail.textContent = '';
+        const h = document.createElement('h3');
+        h.textContent = title;
+        const p = document.createElement('p');
+        p.textContent = text;
+        const ul = document.createElement('ul');
+        items.forEach((x) => {
+          const li = document.createElement('li');
+          li.textContent = x;
+          ul.appendChild(li);
         });
-      });
+        detail.appendChild(h);
+        detail.appendChild(p);
+        detail.appendChild(ul);
+      }));
 
-      // Lesson switching
-      $$('.lesson').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const [title, text, items] = lessons[btn.dataset.lesson];
-          $('lessonDetail').innerHTML = `<h3>${title}</h3><p>${text}</p><ul>${items.map(item => `<li>${item}</li>`).join('')}</ul>`;
-        });
-      });
-
-      // Checkbox persistence
-      $$('.checklist input[type="checkbox"]').forEach(input => {
-        const key = getStorageKey(input.id);
-        input.checked = localStorage.getItem(key) === '1';
-        input.addEventListener('change', () => {
-          localStorage.setItem(key, input.checked ? '1' : '0');
-        });
-      });
-
-      // Textarea persistence
-      ['clinicNote', 'coupleNote'].forEach(id => {
-        const field = $(id);
-        field.value = localStorage.getItem(getStorageKey(id)) || '';
-      });
-
-      // Save buttons
-      $$('[data-save]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = btn.dataset.save;
-          const value = $(id).value;
-          localStorage.setItem(getStorageKey(id), value);
-          const statusId = id === 'clinicNote' ? 'clinicSaved' : 'coupleSaved';
-          $(statusId).textContent = '保存しました';
-          setTimeout(() => {
-            $(statusId).textContent = 'この端末に保存されます';
-          }, 2000);
-        });
-      });
+      /* ---------- 初期化 ---------- */
+      renderRequests();
+      renderJournal();
+      applyRole();
     })();
   </script>
 </body>
