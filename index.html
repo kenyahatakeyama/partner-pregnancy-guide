@@ -648,6 +648,74 @@
 
     .ghost-btn:hover { border-color: var(--primary); }
 
+    /* ---- photos ---- */
+    .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+
+    .photo-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .photo-card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; cursor: zoom-in; display: block; }
+    .photo-meta { padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
+    .photo-meta .badge-week { font-size: 0.75rem; font-weight: 700; color: var(--primary); }
+    .photo-meta .cap { font-size: 0.85rem; overflow-wrap: anywhere; }
+    .photo-meta .req-date { font-size: 0.75rem; color: var(--muted); }
+    .photo-meta .del-btn { align-self: flex-end; margin-top: -4px; }
+
+    .journal-img { max-width: 100%; max-height: 280px; border-radius: 12px; cursor: zoom-in; object-fit: cover; }
+
+    .attach-preview { display: none; align-items: center; gap: 10px; }
+    .attach-preview img { width: 64px; height: 64px; object-fit: cover; border-radius: 10px; }
+
+    .chip-btn {
+      border: 2px solid var(--border);
+      background: transparent;
+      color: var(--foreground);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .chip-btn.on {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .month-head {
+      list-style: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--muted);
+      padding: 10px 2px 0;
+      letter-spacing: 0.04em;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      background: rgba(0, 0, 0, 0.88);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 20px;
+      cursor: zoom-out;
+    }
+
+    .lightbox img { max-width: 100%; max-height: 80vh; border-radius: 12px; }
+    .lightbox p { color: #fff; text-align: center; }
+    .lightbox[hidden] { display: none; }
+
     /* ---- role visibility ---- */
     .mode-husband .wife-only { display: none !important; }
     .mode-wife .husband-only { display: none !important; }
@@ -850,6 +918,17 @@
         <p class="autosave-note" data-status-for="settings">変更すると自動で保存され、ふたりのスマホに反映されます</p>
       </div>
       <div class="section">
+        <h2>成長記録（エコー写真）</h2>
+        <div class="add-row">
+          <input type="text" id="echoCaption" maxlength="60" placeholder="ひとこと（例：はじめてのエコー！）">
+          <button type="button" class="add-btn" id="echoAdd">📷 写真を追加</button>
+        </div>
+        <input type="file" id="echoFile" accept="image/*" hidden>
+        <div class="photo-grid" id="echoGrid"></div>
+        <p class="empty-hint" id="echoEmpty">健診でもらったエコー写真を撮影・保存して、成長の記録に。</p>
+        <p class="autosave-note">写真は自動で縮小して保存されます。同期中はふたりのスマホで見られます。</p>
+      </div>
+      <div class="section">
         <h2>名前候補をふたりで考える</h2>
         <div class="add-row">
           <input type="text" id="nameInput" maxlength="20" placeholder="例：ひなた">
@@ -918,9 +997,21 @@
       <div class="section">
         <h2>ふたりの交換メモ</h2>
         <textarea class="note" id="journalInput" placeholder="例：今日、胎動が強かった！／ 例：帰りにいちご買ってくるね"></textarea>
+        <div class="attach-preview" id="attachPreview">
+          <img id="attachImg" alt="添付写真のプレビュー">
+          <button type="button" class="ghost-btn" id="attachRemove">✕ 写真を外す</button>
+        </div>
         <div class="add-row">
           <p class="autosave-note" style="flex:1">書いた人（今のモード）と日時が記録されます</p>
+          <button type="button" class="ghost-btn" id="journalPhotoBtn">📷 写真</button>
           <button type="button" class="add-btn" id="journalAdd">メモを残す</button>
+        </div>
+        <input type="file" id="journalFile" accept="image/*" hidden>
+        <div class="chips" id="journalFilters" role="group" aria-label="メモの絞り込み">
+          <button type="button" class="chip-btn on" data-f="all">すべて</button>
+          <button type="button" class="chip-btn" data-f="husband">👨 夫</button>
+          <button type="button" class="chip-btn" data-f="wife">👩 妻</button>
+          <button type="button" class="chip-btn" data-f="photo">📷 写真あり</button>
         </div>
         <ul class="journal-list" id="journalList"></ul>
         <p class="empty-hint" id="journalEmpty">まだメモはありません。ひとこと日記のように使えます。</p>
@@ -968,6 +1059,11 @@
     </section>
   </main>
 
+  <div class="lightbox" id="lightbox" hidden>
+    <img id="lightboxImg" alt="写真の拡大表示">
+    <p id="lightboxCap"></p>
+  </div>
+
   <script>
     (() => {
       const app = document.getElementById('app');
@@ -994,6 +1090,65 @@
       const fmt = (ts) => new Date(ts).toLocaleString('ja-JP', {
         month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'
       });
+
+      /* ================= 写真（エコー・メモ添付） ================= */
+      let photos = {};
+      const PHOTO_PREFIX = 'pregnancy-guide-photo-';
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith(PHOTO_PREFIX)) {
+          try { photos[k.slice(PHOTO_PREFIX.length)] = JSON.parse(localStorage.getItem(k)); } catch { /* 破損データは無視 */ }
+        }
+      }
+
+      const savePhotoLocal = (id, obj) => {
+        try { localStorage.setItem(KEY(`photo-${id}`), JSON.stringify(obj)); }
+        catch { /* 端末の空きが足りない時は同期側のみで保持 */ }
+      };
+
+      const addPhoto = (obj) => {
+        const id = 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        photos[id] = obj;
+        savePhotoLocal(id, obj);
+        window.firebaseSync?.pushPhoto(id, obj);
+        return id;
+      };
+
+      const deletePhoto = (id) => {
+        delete photos[id];
+        localStorage.removeItem(KEY(`photo-${id}`));
+        window.firebaseSync?.removePhoto(id);
+      };
+
+      const compressImage = (file) => new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          const MAX = 1000;
+          const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          let q = 0.75;
+          let data = canvas.toDataURL('image/jpeg', q);
+          while (data.length > 500000 && q > 0.35) {
+            q -= 0.15;
+            data = canvas.toDataURL('image/jpeg', q);
+          }
+          resolve(data);
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('decode failed')); };
+        img.src = url;
+      });
+
+      const openLightbox = (src, caption) => {
+        $('lightboxImg').src = src;
+        $('lightboxCap').textContent = caption || '';
+        $('lightbox').hidden = false;
+      };
+      $('lightbox').addEventListener('click', () => { $('lightbox').hidden = true; });
 
       /* ================================================================
          データ：赤ちゃんの週ごとの発育（目安）
@@ -1591,6 +1746,79 @@
       $('nameAdd').addEventListener('click', addName);
       $('nameInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') addName(); });
 
+      /* ================= 成長記録（エコー写真） ================= */
+      const renderGallery = () => {
+        const grid = $('echoGrid');
+        grid.textContent = '';
+        const list = Object.entries(photos)
+          .filter(([, p]) => p.t === 'echo')
+          .sort((a, b) => b[1].createdAt - a[1].createdAt);
+        $('echoEmpty').style.display = list.length ? 'none' : '';
+
+        list.forEach(([id, p]) => {
+          const card = document.createElement('div');
+          card.className = 'photo-card';
+
+          const img = document.createElement('img');
+          img.src = p.d;
+          img.alt = p.caption || 'エコー写真';
+          img.loading = 'lazy';
+          img.addEventListener('click', () => openLightbox(p.d, `${p.week ? p.week + '週のころ　' : ''}${p.caption || ''}`));
+
+          const meta = document.createElement('div');
+          meta.className = 'photo-meta';
+          if (p.week) {
+            const wk = document.createElement('span');
+            wk.className = 'badge-week';
+            wk.textContent = `${p.week}週のころ`;
+            meta.appendChild(wk);
+          }
+          if (p.caption) {
+            const cap = document.createElement('span');
+            cap.className = 'cap';
+            cap.textContent = p.caption;
+            meta.appendChild(cap);
+          }
+          const dt = document.createElement('span');
+          dt.className = 'req-date';
+          dt.textContent = fmt(p.createdAt);
+          meta.appendChild(dt);
+
+          const del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'del-btn';
+          del.textContent = '✕';
+          del.setAttribute('aria-label', '写真を削除');
+          del.addEventListener('click', () => {
+            if (confirm('この写真を削除しますか？（ふたりのスマホから消えます）')) {
+              deletePhoto(id);
+              renderGallery();
+            }
+          });
+          meta.appendChild(del);
+
+          card.appendChild(img);
+          card.appendChild(meta);
+          grid.appendChild(card);
+        });
+      };
+
+      $('echoAdd').addEventListener('click', () => $('echoFile').click());
+      $('echoFile').addEventListener('change', async () => {
+        const file = $('echoFile').files[0];
+        $('echoFile').value = '';
+        if (!file) return;
+        try {
+          const data = await compressImage(file);
+          const c = compute();
+          addPhoto({ d: data, t: 'echo', week: c ? c.week : 0, caption: $('echoCaption').value.trim(), createdAt: Date.now(), role });
+          $('echoCaption').value = '';
+          renderGallery();
+        } catch {
+          alert('写真を読み込めませんでした。別の写真でお試しください。');
+        }
+      });
+
       /* ================= 胎動カウンター ================= */
       let kicks = load('kicks', {});
 
@@ -1618,13 +1846,41 @@
 
       /* ================= ふたりの交換メモ ================= */
       let journal = load('journal', []);
+      let journalFilter = 'all';
+      let pendingPhoto = null;
+
+      const monthLabel = (ts) => {
+        const d = new Date(ts);
+        return `${d.getFullYear()}年${d.getMonth() + 1}月`;
+      };
 
       const renderJournal = () => {
         const list = $('journalList');
         list.textContent = '';
-        $('journalEmpty').style.display = journal.length ? 'none' : '';
 
-        journal.forEach((entry) => {
+        const filtered = journal.filter((e) =>
+          journalFilter === 'all' ? true :
+          journalFilter === 'photo' ? !!e.photoId :
+          e.role === journalFilter
+        );
+
+        const empty = $('journalEmpty');
+        empty.style.display = filtered.length ? 'none' : '';
+        empty.textContent = journal.length && !filtered.length
+          ? 'この条件のメモはまだありません。'
+          : 'まだメモはありません。ひとこと日記のように使えます。';
+
+        let lastMonth = '';
+        filtered.forEach((entry) => {
+          const m = monthLabel(entry.createdAt);
+          if (m !== lastMonth) {
+            lastMonth = m;
+            const head = document.createElement('li');
+            head.className = 'month-head';
+            head.textContent = `📖 ${m}`;
+            list.appendChild(head);
+          }
+
           const li = document.createElement('li');
           li.className = 'journal-entry';
 
@@ -1641,6 +1897,8 @@
           del.textContent = '✕';
           del.setAttribute('aria-label', '削除');
           del.addEventListener('click', () => {
+            if (entry.photoId && !confirm('写真ごとメモを削除しますか？')) return;
+            if (entry.photoId) deletePhoto(entry.photoId);
             journal = journal.filter((j) => j !== entry);
             save('journal', journal);
             syncPush('journal', journal);
@@ -1649,23 +1907,74 @@
           meta.appendChild(badge);
           meta.appendChild(time);
           meta.appendChild(del);
-
-          const body = document.createElement('p');
-          body.textContent = entry.text;
-
           li.appendChild(meta);
-          li.appendChild(body);
+
+          if (entry.photoId) {
+            const p = photos[entry.photoId];
+            if (p) {
+              const img = document.createElement('img');
+              img.className = 'journal-img';
+              img.src = p.d;
+              img.alt = 'メモの写真';
+              img.loading = 'lazy';
+              img.addEventListener('click', () => openLightbox(p.d, entry.text || ''));
+              li.appendChild(img);
+            } else {
+              const ph = document.createElement('p');
+              ph.className = 'empty-hint';
+              ph.textContent = '📷 写真を同期中…';
+              li.appendChild(ph);
+            }
+          }
+
+          if (entry.text) {
+            const body = document.createElement('p');
+            body.textContent = entry.text;
+            li.appendChild(body);
+          }
+
           list.appendChild(li);
         });
       };
 
+      $$('#journalFilters .chip-btn').forEach((btn) => btn.addEventListener('click', () => {
+        journalFilter = btn.dataset.f;
+        $$('#journalFilters .chip-btn').forEach((b) => b.classList.toggle('on', b === btn));
+        renderJournal();
+      }));
+
+      const clearAttach = () => {
+        pendingPhoto = null;
+        $('attachPreview').style.display = 'none';
+      };
+
+      $('journalPhotoBtn').addEventListener('click', () => $('journalFile').click());
+      $('journalFile').addEventListener('change', async () => {
+        const file = $('journalFile').files[0];
+        $('journalFile').value = '';
+        if (!file) return;
+        try {
+          pendingPhoto = await compressImage(file);
+          $('attachImg').src = pendingPhoto;
+          $('attachPreview').style.display = 'flex';
+        } catch {
+          alert('写真を読み込めませんでした。別の写真でお試しください。');
+        }
+      });
+      $('attachRemove').addEventListener('click', clearAttach);
+
       $('journalAdd').addEventListener('click', () => {
         const text = $('journalInput').value.trim();
-        if (!text) return;
-        journal.unshift({ role, text, createdAt: Date.now() });
+        if (!text && !pendingPhoto) return;
+        const entry = { role, text, createdAt: Date.now() };
+        if (pendingPhoto) {
+          entry.photoId = addPhoto({ d: pendingPhoto, t: 'memo', createdAt: Date.now(), role });
+        }
+        journal.unshift(entry);
         save('journal', journal);
         syncPush('journal', journal);
         $('journalInput').value = '';
+        clearAttach();
         renderJournal();
       });
 
@@ -1731,49 +2040,74 @@
           $$('.checklist input[type="checkbox"]').forEach((i) => { checks[i.id] = i.checked; });
           const notes = {};
           NOTE_IDS.forEach((id) => { notes[id] = $(id).value; });
-          return { settings, requests, journal, names, kicks, checks, notes };
+          return { settings, requests, journal, names, kicks, checks, notes, photos };
         },
-        applyRemote(data) {
-          if (data.settings) {
-            const merged = Object.assign({ dueDate: null, gender: 'secret', babyName: '' }, data.settings);
-            if (JSON.stringify(merged) !== JSON.stringify(settings)) {
-              settings = merged;
-              save('settings', settings);
-              refresh();
+        applyPart(key, value) {
+          switch (key) {
+            case 'settings': {
+              const merged = Object.assign({ dueDate: null, gender: 'secret', babyName: '' }, value || {});
+              if (JSON.stringify(merged) !== JSON.stringify(settings)) {
+                settings = merged;
+                save('settings', settings);
+                refresh();
+              }
+              break;
+            }
+            case 'requests':
+              requests = normList(value);
+              save('requests', requests);
+              renderRequests();
+              break;
+            case 'journal':
+              journal = normList(value);
+              save('journal', journal);
+              renderJournal();
+              break;
+            case 'names':
+              names = normList(value);
+              save('names', names);
+              renderNames();
+              break;
+            case 'kicks':
+              kicks = value || {};
+              save('kicks', kicks);
+              renderKicks();
+              break;
+            case 'checks': {
+              const checks = value || {};
+              $$('.checklist input[type="checkbox"]').forEach((i) => {
+                const v = !!checks[i.id];
+                if (i.checked !== v) i.checked = v;
+                save(`check-${i.id}`, v);
+              });
+              updatePrep();
+              break;
+            }
+            case 'notes': {
+              const notes = value || {};
+              NOTE_IDS.forEach((id) => {
+                const f = $(id);
+                const v = notes[id] || '';
+                if (document.activeElement !== f && f.value !== v) f.value = v;
+                save(`note-${id}`, v);
+              });
+              break;
             }
           }
-
-          requests = normList(data.requests);
-          save('requests', requests);
-          renderRequests();
-
-          journal = normList(data.journal);
-          save('journal', journal);
+        },
+        photoAdded(id, obj) {
+          if (photos[id]) return;
+          photos[id] = obj;
+          savePhotoLocal(id, obj);
+          renderGallery();
           renderJournal();
-
-          names = normList(data.names);
-          save('names', names);
-          renderNames();
-
-          kicks = data.kicks || {};
-          save('kicks', kicks);
-          renderKicks();
-
-          const checks = data.checks || {};
-          $$('.checklist input[type="checkbox"]').forEach((i) => {
-            const v = !!checks[i.id];
-            if (i.checked !== v) i.checked = v;
-            save(`check-${i.id}`, v);
-          });
-          updatePrep();
-
-          const notes = data.notes || {};
-          NOTE_IDS.forEach((id) => {
-            const f = $(id);
-            const v = notes[id] || '';
-            if (document.activeElement !== f && f.value !== v) f.value = v;
-            save(`note-${id}`, v);
-          });
+        },
+        photoRemoved(id) {
+          if (!photos[id]) return;
+          delete photos[id];
+          localStorage.removeItem(KEY(`photo-${id}`));
+          renderGallery();
+          renderJournal();
         },
         setSyncStatus(connected, code) {
           $('syncOff').style.display = connected ? 'none' : 'flex';
@@ -1814,6 +2148,7 @@
       updatePrep();
       renderRequests();
       renderNames();
+      renderGallery();
       renderKicks();
       renderJournal();
       applyRole();
@@ -1824,7 +2159,7 @@
     /* Firebase 同期レイヤー（読み込み失敗時はローカル保存のみで動作） */
     try {
       const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-      const { getDatabase, ref, set, onValue, get, off } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js');
+      const { getDatabase, ref, set, remove, onValue, onChildAdded, onChildRemoved, get, off } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js');
 
       // Firebase のウェブ設定（公開してよい接続情報。アクセス制御はDBルール側で行う）
       const firebaseConfig = {
@@ -1842,9 +2177,11 @@
       const CODE_KEY = 'pregnancy-guide-familyCode';
 
       let code = localStorage.getItem(CODE_KEY) || null;
-      let familyRef = null;
+      let refs = [];
 
       const base = () => `families/${code}`;
+      // データ本体と写真を分けて購読し、写真の再ダウンロードを避ける
+      const CHILDREN = ['settings', 'requests', 'journal', 'names', 'kicks', 'checks', 'notes'];
 
       const genCode = () => {
         const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
@@ -1853,16 +2190,27 @@
       };
 
       const listen = () => {
-        familyRef = ref(db, base());
-        onValue(familyRef, (snap) => {
-          window.guideApp.applyRemote(snap.val() || {});
+        CHILDREN.forEach((key) => {
+          const r = ref(db, `${base()}/${key}`);
+          onValue(r, (snap) => window.guideApp.applyPart(key, snap.val()));
+          refs.push(r);
         });
+        const pr = ref(db, `${base()}/photos`);
+        onChildAdded(pr, (snap) => window.guideApp.photoAdded(snap.key, snap.val()));
+        onChildRemoved(pr, (snap) => window.guideApp.photoRemoved(snap.key));
+        refs.push(pr);
         window.guideApp.setSyncStatus(true, code);
       };
 
       window.firebaseSync = {
         push(key, value) {
           if (code) set(ref(db, `${base()}/${key}`), value);
+        },
+        pushPhoto(id, obj) {
+          if (code) set(ref(db, `${base()}/photos/${id}`), obj);
+        },
+        removePhoto(id) {
+          if (code) remove(ref(db, `${base()}/photos/${id}`));
         },
         createFamily() {
           code = genCode();
@@ -1882,8 +2230,8 @@
           });
         },
         disconnect() {
-          if (familyRef) off(familyRef);
-          familyRef = null;
+          refs.forEach((r) => off(r));
+          refs = [];
           code = null;
           localStorage.removeItem(CODE_KEY);
           window.guideApp.setSyncStatus(false);
